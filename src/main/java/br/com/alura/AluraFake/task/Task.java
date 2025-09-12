@@ -50,6 +50,14 @@ public class Task {
         this.course = course;
         this.statement = statement;
         this.order = order;
+        this.course.addTask(this);
     }
 
+    public boolean isStatementEquals(String statement) {
+        return this.statement.equals(statement);
+    }
+
+    public String getStatement() {
+        return statement;
+    }
 }
