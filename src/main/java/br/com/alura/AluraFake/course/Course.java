@@ -1,13 +1,14 @@
 package br.com.alura.AluraFake.course;
 
+import br.com.alura.AluraFake.task.OrderedTasks;
 import br.com.alura.AluraFake.task.Task;
 import br.com.alura.AluraFake.user.User;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.TreeSet;
 
 @Entity
 public class Course {
@@ -24,8 +25,11 @@ public class Course {
     private Status status;
     private LocalDateTime publishedAt;
 
-    @OneToMany
-    private List<Task> tasks = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private final TreeSet<Task> tasks = new TreeSet<>();
+    
+    @Transient
+    private OrderedTasks orderedTasks;
 
     @Deprecated
     public Course(){}
@@ -36,6 +40,12 @@ public class Course {
         this.instructor = instructor;
         this.description = description;
         this.status = Status.BUILDING;
+        this.orderedTasks = new OrderedTasks(this.tasks);
+    }
+
+    @PostLoad
+    private void postLoad() {
+        this.orderedTasks = new OrderedTasks(this.tasks);
     }
 
     public Long getId() {
@@ -74,15 +84,13 @@ public class Course {
         return Status.BUILDING.equals(this.status);
     }
 
-    // Aqui estou assumindo que um curso não haveria um número enorme de atividades (e que cada atividade não possui campos pesados).
-    // Mas caso fosse esse o caso, essa checagem poderia ser problemática por carregar todas as atividades em memória.
     public boolean hasTaskWithStatement(String statement) {
-        return this.tasks.stream().anyMatch(currentTask -> currentTask.isStatementEquals(statement));
+        return this.orderedTasks.hasTaskWithStatement(statement);
     }
 
     public void addTask(Task task){
        Assert.isTrue(this.isBuilding(), "Course can't receive more tasks when not in BUILDING status");
        Assert.isTrue(!this.hasTaskWithStatement(task.getStatement()), "Course can't have multiple tasks with the same statement");
-       this.tasks.add(task);
+       this.orderedTasks.add(task);
     }
 }

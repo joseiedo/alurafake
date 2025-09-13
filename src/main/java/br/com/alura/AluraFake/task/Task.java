@@ -8,13 +8,14 @@ import jakarta.validation.constraints.Size;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(
         name = "IDX_course_id",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"course_id", "statement"})}
 )
-public class Task {
+public class Task implements Comparable<Task> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +32,6 @@ public class Task {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @NotNull
     private Type type;
 
     @ManyToOne
@@ -56,11 +56,44 @@ public class Task {
         this.course.addTask(this);
     }
 
-    public boolean isStatementEquals(String statement) {
+    public String getStatement() {
+        return statement;
+    }
+
+    public Boolean isStatementEquals(String statement) {
         return this.statement.equals(statement);
     }
 
-    public String getStatement() {
-        return statement;
+    public Type getType() {
+        return type;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public Integer getOrderDistance(Task task) {
+        Assert.notNull(task, "Received task can't be null");
+        return Math.abs(this.order - task.getOrder());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Task task)) return false;
+        return Objects.equals(statement, task.statement) && Objects.equals(order, task.order) && type == task.type && Objects.equals(course, task.course);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(statement, order, type, course);
+    }
+
+    @Override
+    public int compareTo(Task other) {
+        return this.order.compareTo(other.order);
+    }
+
+    public void incrementOrder() {
+        this.order++;
     }
 }
