@@ -12,10 +12,12 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        name = "IDX_course_id",
+        name = "Task",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"course_id", "statement"})}
 )
-public class Task implements Comparable<Task> {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+public abstract class Task implements Comparable<Task> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,30 +32,29 @@ public class Task implements Comparable<Task> {
     @Column(name = "task_order")
     private Integer order;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private Type type;
-
     @ManyToOne
+    @JoinColumn(columnDefinition = "course_id", referencedColumnName = "id")
     private Course course;
 
     @Deprecated
     public Task() {
     }
 
-    public Task(@NotNull Course course, @NotNull Type type, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order) {
-        Assert.notNull(type, "type cannot be null");
+    protected Task(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order) {
         Assert.notNull(course, "course cannot be null");
         Assert.hasText(statement, "statement cannot be null or empty");
         Assert.isTrue(statement.length() >= 4 && statement.length() <= 255, "statement must be between 4 and 255 characters");
         Assert.notNull(order, "order cannot be null");
         Assert.isTrue(order >= 1, "order must be at least 1");
 
-        this.type = type;
         this.course = course;
         this.statement = statement;
         this.order = order;
         this.course.addTask(this);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getStatement() {
@@ -64,9 +65,7 @@ public class Task implements Comparable<Task> {
         return this.statement.equals(statement);
     }
 
-    public Type getType() {
-        return type;
-    }
+    public abstract Type getType();
 
     public Integer getOrder() {
         return order;
@@ -80,12 +79,12 @@ public class Task implements Comparable<Task> {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Task task)) return false;
-        return Objects.equals(statement, task.statement) && Objects.equals(order, task.order) && type == task.type && Objects.equals(course, task.course);
+        return Objects.equals(statement, task.statement) && Objects.equals(order, task.order) && getType() == task.getType() && Objects.equals(course, task.course);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(statement, order, type, course);
+        return Objects.hash(statement, order, getType(), course);
     }
 
     @Override
@@ -96,4 +95,5 @@ public class Task implements Comparable<Task> {
     public void incrementOrder() {
         this.order++;
     }
+
 }

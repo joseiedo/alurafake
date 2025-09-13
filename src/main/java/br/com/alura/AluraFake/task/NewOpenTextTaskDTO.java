@@ -17,12 +17,12 @@ public record NewOpenTextTaskDTO(
         Integer order
 ) {
 
-    public Task toModel(
+    public OpenTextTask toModel(
             CourseRepository courseRepository
     ) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
-        return new Task(course, Type.OPEN_TEXT, statement, order);
+        return new OpenTextTask(course, statement, order);
     }
 
 }

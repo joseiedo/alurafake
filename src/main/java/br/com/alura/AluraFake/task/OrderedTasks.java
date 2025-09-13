@@ -15,6 +15,10 @@ public class OrderedTasks {
         this.tasks = tasks;
     }
 
+    public OrderedTasks(Collection<Task> tasks) {
+        this(new TreeSet<>(tasks));
+    }
+
     public void add(Task task) {
         Assert.isTrue(hasOrderRespectingTasksSize(task), "Task order value is higher than list size");
         Assert.isTrue(hasValidRangeGaps(task), "Task has an order with an invalid gap between existing tasks");

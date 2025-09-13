@@ -40,7 +40,7 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
-        Task task = new Task(mockCourse, Type.OPEN_TEXT, "New task statement", 1);
+        OpenTextTask task = new OpenTextTask(mockCourse, "New task statement", 1);
 
         organizer.add(task);
 
@@ -54,10 +54,10 @@ class OrderedTasksTest {
 
     @Test
     void add__should_shift_task_with_equal_and_higher_orders_when_conflicting_order() {
-        Task existingTask1 = new Task(mockCourse, Type.OPEN_TEXT, "First task", 1);
-        Task existingTask2 = new Task(mockCourse, Type.OPEN_TEXT, "Second task", 2);
-        Task existingTask3 = new Task(mockCourse, Type.OPEN_TEXT, "Second task", 3);
-        Task taskWithConflictingOrder = new Task(mockCourse, Type.OPEN_TEXT, "New task at position 2", 2);
+        OpenTextTask existingTask1 = new OpenTextTask(mockCourse, "First task", 1);
+        OpenTextTask existingTask2 = new OpenTextTask(mockCourse, "Second task", 2);
+        OpenTextTask existingTask3 = new OpenTextTask(mockCourse, "Second task", 3);
+        OpenTextTask taskWithConflictingOrder = new OpenTextTask(mockCourse, "New task at position 2", 2);
 
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks) {{
@@ -87,19 +87,19 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
 
         OrderedTasks organizer = new OrderedTasks(tasks) {{
-            add(new Task(mockCourse, Type.OPEN_TEXT, "Task 1", 1));
+            add(new OpenTextTask(mockCourse, "Task 1", 1));
         }};
 
-        Task newTask = new Task(mockCourse, Type.OPEN_TEXT, "New task at 5", 5);
+        OpenTextTask newTask = new OpenTextTask(mockCourse, "New task at 5", 5);
 
         assertThrows(IllegalArgumentException.class, () -> organizer.add(newTask));
     }
 
     @Test
     void add__should_add_task_at_end_without_shifting() {
-        Task task1 = new Task(mockCourse, Type.OPEN_TEXT, "Task 1", 1);
-        Task task2 = new Task(mockCourse, Type.SINGLE_CHOICE, "Task 2", 2);
-        Task newTask = new Task(mockCourse, Type.MULTIPLE_CHOICE, "Task 3", 3);
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
+        OpenTextTask task2 = new OpenTextTask(mockCourse, "Task 2", 2);
+        OpenTextTask newTask = new OpenTextTask(mockCourse, "Task 3", 3);
 
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks) {{
@@ -120,7 +120,7 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
-        Task task = new Task(mockCourse, Type.OPEN_TEXT, "First task", 1);
+        OpenTextTask task = new OpenTextTask(mockCourse, "First task", 1);
 
         assertTrue(organizer.hasValidRangeGaps(task));
     }
@@ -130,10 +130,10 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
-        Task task1 = new Task(mockCourse, Type.OPEN_TEXT, "Task 1", 1);
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
         organizer.add(task1);
 
-        Task newTask = new Task(mockCourse, Type.SINGLE_CHOICE, "Task 2", 3);
+        OpenTextTask newTask = new OpenTextTask(mockCourse, "Task 2", 3);
 
         assertFalse(organizer.hasValidRangeGaps(newTask));
     }
@@ -143,10 +143,10 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
-        Task task1 = new Task(mockCourse, Type.OPEN_TEXT, "Task 1", 1);
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
         tasks.add(task1);
 
-        Task newTask = new Task(mockCourse, Type.SINGLE_CHOICE, "Task with gap", 3);
+        OpenTextTask newTask = new OpenTextTask(mockCourse, "Task with gap", 3);
 
         assertFalse(organizer.hasValidRangeGaps(newTask));
     }
@@ -156,10 +156,10 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
-        Task task5 = new Task(mockCourse, Type.OPEN_TEXT, "Task 5", 5);
+        OpenTextTask task5 = new OpenTextTask(mockCourse, "Task 5", 5);
         tasks.add(task5);
 
-        Task newTask = new Task(mockCourse, Type.SINGLE_CHOICE, "Task with gap", 3);
+        OpenTextTask newTask = new OpenTextTask(mockCourse, "Task with gap", 3);
 
         assertFalse(organizer.hasValidRangeGaps(newTask));
     }
@@ -169,13 +169,13 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
-        Task task1 = new Task(mockCourse, Type.OPEN_TEXT, "Task 1", 1);
-        Task task5 = new Task(mockCourse, Type.MULTIPLE_CHOICE, "Task 5", 5);
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
+        OpenTextTask task5 = new OpenTextTask(mockCourse, "Task 5", 5);
 
         tasks.add(task1);
         tasks.add(task5);
 
-        Task newTask = new Task(mockCourse, Type.SINGLE_CHOICE, "Task with gaps", 3);
+        OpenTextTask newTask = new OpenTextTask(mockCourse, "Task with gaps", 3);
 
         assertFalse(organizer.hasValidRangeGaps(newTask));
     }
@@ -185,10 +185,10 @@ class OrderedTasksTest {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
-        Task existingTask = new Task(mockCourse, Type.OPEN_TEXT, "Existing task", 2);
+        OpenTextTask existingTask = new OpenTextTask(mockCourse, "Existing task", 2);
         tasks.add(existingTask);
 
-        Task newTask = new Task(mockCourse, Type.SINGLE_CHOICE, "New task", 2);
+        OpenTextTask newTask = new OpenTextTask(mockCourse, "New task", 2);
 
         assertTrue(organizer.hasValidRangeGaps(newTask));
     }

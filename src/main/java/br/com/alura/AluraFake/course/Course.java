@@ -3,11 +3,12 @@ package br.com.alura.AluraFake.course;
 import br.com.alura.AluraFake.task.OrderedTasks;
 import br.com.alura.AluraFake.task.Task;
 import br.com.alura.AluraFake.user.User;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 @Entity
@@ -25,9 +26,9 @@ public class Course {
     private Status status;
     private LocalDateTime publishedAt;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    private final TreeSet<Task> tasks = new TreeSet<>();
-    
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Task> tasks;
+
     @Transient
     private OrderedTasks orderedTasks;
 
@@ -40,6 +41,7 @@ public class Course {
         this.instructor = instructor;
         this.description = description;
         this.status = Status.BUILDING;
+        this.tasks = new ArrayList<>();
         this.orderedTasks = new OrderedTasks(this.tasks);
     }
 
