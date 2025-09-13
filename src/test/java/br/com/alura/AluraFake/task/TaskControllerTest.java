@@ -122,7 +122,7 @@ public class TaskControllerTest {
         User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
         Course course = new Course("Java Basics", "Introduction to Java", instructor);
         
-        Task existingTask = new Task(course, "Duplicate statement", 1);
+        Task existingTask = new Task(course, Type.OPEN_TEXT, "Duplicate statement", 1);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
 
@@ -140,7 +140,7 @@ public class TaskControllerTest {
         User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
         Course course = new Course("Java Basics", "Introduction to Java", instructor);
         
-        Task existingTask = new Task(course, "Existing statement", 1);
+        Task existingTask = new Task(course, Type.OPEN_TEXT, "Existing statement", 1);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
 

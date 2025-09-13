@@ -22,7 +22,7 @@ public record NewOpenTextTaskDTO(
     ) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
-        return new Task(course, statement, order);
+        return new Task(course, Type.OPEN_TEXT, statement, order);
     }
 
 }

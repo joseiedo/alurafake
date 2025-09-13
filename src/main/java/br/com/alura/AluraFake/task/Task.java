@@ -29,6 +29,7 @@ public class Task {
     @Column(name = "task_order")
     private Integer order;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @NotNull
     private Type type;
@@ -40,13 +41,15 @@ public class Task {
     public Task() {
     }
 
-    public Task(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order) {
+    public Task(@NotNull Course course, @NotNull Type type, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order) {
+        Assert.notNull(type, "type cannot be null");
         Assert.notNull(course, "course cannot be null");
         Assert.hasText(statement, "statement cannot be null or empty");
         Assert.isTrue(statement.length() >= 4 && statement.length() <= 255, "statement must be between 4 and 255 characters");
         Assert.notNull(order, "order cannot be null");
         Assert.isTrue(order >= 1, "order must be at least 1");
-        
+
+        this.type = type;
         this.course = course;
         this.statement = statement;
         this.order = order;
