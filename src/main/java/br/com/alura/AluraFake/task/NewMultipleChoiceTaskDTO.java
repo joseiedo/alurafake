@@ -35,6 +35,14 @@ public record NewMultipleChoiceTaskDTO(
         return new MultipleChoiceTask(course, statement, order, taskOptions);
     }
 
+
+    public Boolean hasRequiredOptionCounts() {
+        long correct = options.stream().filter(TaskOptionDTO::isCorrect).count();
+        long wrong = options.size() - correct;
+
+        return wrong >= MultipleChoiceTask.MIN_WRONG_OPTIONS && correct >= MultipleChoiceTask.MIN_CORRECT_OPTIONS;
+    }
+
     public record TaskOptionDTO(
             @NotNull
             @Size(min = 4, max = 80)

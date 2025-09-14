@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 @RestController
 public class TaskController {
 
@@ -51,13 +53,10 @@ public class TaskController {
 
     @PostMapping("/task/new/singlechoice")
     @Transactional
-    public ResponseEntity newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
-        long count = dto.options().stream().filter(NewSingleChoiceTaskDTO.TaskOptionDTO::isCorrect).count();
-        if (count > 1) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", "More than one option has isCorrect as true"));
-        }
-        if (count < 1) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", "Task must have at least one option with isCorrect as true"));
+    public ResponseEntity<?> newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
+        if (dto.hasRequiredCorrectOption()) {
+            String message = format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_OPTIONS);
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", message));
         }
 
         Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());
@@ -86,15 +85,10 @@ public class TaskController {
 
     @PostMapping("/task/new/multiplechoice")
     @Transactional
-    public ResponseEntity newMultipleChoice(@RequestBody @Valid NewMultipleChoiceTaskDTO dto) {
-        long correctCount = dto.options().stream().filter(NewMultipleChoiceTaskDTO.TaskOptionDTO::isCorrect).count();
-        long wrongCount = dto.options().stream().filter(option -> !option.isCorrect()).count();
-
-        if (correctCount < MultipleChoiceTask.MIN_CORRECT_OPTIONS) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", "Task must have at least 2 options with isCorrect as true"));
-        }
-        if (wrongCount < MultipleChoiceTask.MIN_WRONG_OPTIONS) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", "Task must have at least 1 option with isCorrect as false"));
+    public ResponseEntity<?> newMultipleChoice(@RequestBody @Valid NewMultipleChoiceTaskDTO dto) {
+        if (!dto.hasRequiredOptionCounts()) {
+            String message = format("Task must include at least %d correct option(s) and %d incorrect option(s).", MultipleChoiceTask.MIN_CORRECT_OPTIONS, MultipleChoiceTask.MIN_WRONG_OPTIONS);
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", message));
         }
 
         Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());

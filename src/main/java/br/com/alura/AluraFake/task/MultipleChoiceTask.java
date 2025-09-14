@@ -14,8 +14,8 @@ import java.util.List;
 @DiscriminatorValue("MULTIPLE_CHOICE")
 public class MultipleChoiceTask extends TaskWithOptions {
 
-    public static final int MIN_WRONG_OPTIONS = 1;
-    public static final int MIN_CORRECT_OPTIONS = 2;
+    public static final Long MIN_WRONG_OPTIONS = 1L;
+    public static final Long MIN_CORRECT_OPTIONS = 2L;
 
     @Deprecated
     public MultipleChoiceTask() {

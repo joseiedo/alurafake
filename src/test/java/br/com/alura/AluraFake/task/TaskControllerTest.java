@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,8 +41,8 @@ public class TaskControllerTest {
         NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(1L, "abc", 1);
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].field").value("statement"))
                 .andExpect(jsonPath("$[0].message").value("size must be between 4 and 255"));
@@ -53,8 +54,8 @@ public class TaskControllerTest {
         NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(1L, longStatement, 1);
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].field").value("statement"))
                 .andExpect(jsonPath("$[0].message").value("size must be between 4 and 255"));
@@ -65,8 +66,8 @@ public class TaskControllerTest {
         NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(1L, "Valid statement", 0);
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].field").value("order"))
                 .andExpect(jsonPath("$[0].message").value("must be greater than or equal to 1"));
@@ -75,12 +76,12 @@ public class TaskControllerTest {
     @Test
     public void shouldRejectNonExistentCourse() throws Exception {
         NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(999L, "Valid statement", 1);
-        
+
         when(courseRepository.findById(999L)).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course not found"));
@@ -91,12 +92,12 @@ public class TaskControllerTest {
         NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(1L, "Valid statement", 1);
         User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
         Course buildingCourse = new Course("Java Basics", "Introduction to Java", instructor);
-        
+
         when(courseRepository.findById(1L)).thenReturn(Optional.of(buildingCourse));
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
     }
 
@@ -106,12 +107,12 @@ public class TaskControllerTest {
         User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
         Course publishedCourse = new Course("Java Basics", "Introduction to Java", instructor);
         publishedCourse.setStatus(Status.PUBLISHED);
-        
+
         when(courseRepository.findById(1L)).thenReturn(Optional.of(publishedCourse));
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course can't have new tasks when not in BUILDING status"));
@@ -122,14 +123,14 @@ public class TaskControllerTest {
         NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(1L, "Duplicate statement", 1);
         User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
         Course course = new Course("Java Basics", "Introduction to Java", instructor);
-        
+
         OpenTextTask existingTask = new OpenTextTask(course, "Duplicate statement", 1);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("statement"))
                 .andExpect(jsonPath("$.message").value("Course can't have tasks with the same statement"));
@@ -146,8 +147,8 @@ public class TaskControllerTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
 
         mockMvc.perform(post("/task/new/opentext")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
     }
 
@@ -166,8 +167,8 @@ public class TaskControllerTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(buildingCourse));
 
         mockMvc.perform(post("/task/new/singlechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
     }
 
@@ -181,11 +182,11 @@ public class TaskControllerTest {
         NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
 
         mockMvc.perform(post("/task/new/singlechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("options"))
-                .andExpect(jsonPath("$.message").value("Task must have at least one option with isCorrect as true"));
+                .andExpect(jsonPath("$.message").value(format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_OPTIONS)));
     }
 
     @Test
@@ -198,11 +199,11 @@ public class TaskControllerTest {
         NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
 
         mockMvc.perform(post("/task/new/singlechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("options"))
-                .andExpect(jsonPath("$.message").value("More than one option has isCorrect as true"));
+                .andExpect(jsonPath("$.message").value(format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_OPTIONS)));
     }
 
     @Test
@@ -221,8 +222,8 @@ public class TaskControllerTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(publishedCourse));
 
         mockMvc.perform(post("/task/new/singlechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course can't have new tasks when not in BUILDING status"));
@@ -240,8 +241,8 @@ public class TaskControllerTest {
         when(courseRepository.findById(999L)).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/task/new/singlechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course not found"));
@@ -255,8 +256,8 @@ public class TaskControllerTest {
         NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
 
         mockMvc.perform(post("/task/new/singlechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].field").value("options"))
                 .andExpect(jsonPath("$[0].message").value("size must be between 2 and 5"));
@@ -275,8 +276,8 @@ public class TaskControllerTest {
         NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
 
         mockMvc.perform(post("/task/new/singlechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].field").value("options"))
                 .andExpect(jsonPath("$[0].message").value("size must be between 2 and 5"));
@@ -298,8 +299,8 @@ public class TaskControllerTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(buildingCourse));
 
         mockMvc.perform(post("/task/new/multiplechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
     }
 
@@ -313,11 +314,15 @@ public class TaskControllerTest {
         NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(1L, "What are Java characteristics?", 1, options);
 
         mockMvc.perform(post("/task/new/multiplechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("options"))
-                .andExpect(jsonPath("$.message").value("Task must have at least 2 options with isCorrect as true"));
+                .andExpect(jsonPath("$.message").value(format(
+                        "Task must include at least %d correct option(s) and %d incorrect option(s).",
+                        MultipleChoiceTask.MIN_CORRECT_OPTIONS,
+                        MultipleChoiceTask.MIN_WRONG_OPTIONS
+                )));
     }
 
     @Test
@@ -330,11 +335,15 @@ public class TaskControllerTest {
         NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(1L, "What are Java characteristics?", 1, options);
 
         mockMvc.perform(post("/task/new/multiplechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("options"))
-                .andExpect(jsonPath("$.message").value("Task must have at least 1 option with isCorrect as false"));
+                .andExpect(jsonPath("$.message").value(format(
+                        "Task must include at least %d correct option(s) and %d incorrect option(s).",
+                        MultipleChoiceTask.MIN_CORRECT_OPTIONS,
+                        MultipleChoiceTask.MIN_WRONG_OPTIONS
+                )));
     }
 
     @Test
@@ -353,8 +362,8 @@ public class TaskControllerTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(publishedCourse));
 
         mockMvc.perform(post("/task/new/multiplechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course can't have new tasks when not in BUILDING status"));
@@ -372,8 +381,8 @@ public class TaskControllerTest {
         when(courseRepository.findById(999L)).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/task/new/multiplechoice")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course not found"));
