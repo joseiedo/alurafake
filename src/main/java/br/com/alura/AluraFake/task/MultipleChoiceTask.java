@@ -16,11 +16,10 @@ public class MultipleChoiceTask extends TaskWithOptions {
 
     @Deprecated
     public MultipleChoiceTask() {
-        super();
     }
 
-    public MultipleChoiceTask(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order) {
-        super(course, statement, order);
+    public MultipleChoiceTask(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order, @NotNull @Size(min = 3, max = 5) List<TaskOption> options) {
+        super(course, statement, order, options);
     }
 
     @Override

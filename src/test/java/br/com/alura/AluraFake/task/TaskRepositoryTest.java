@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -73,10 +74,16 @@ public class TaskRepositoryTest {
     }
 
     private Task createTaskByType(Type type, String statement) {
+        List<TaskOption> validOptions = List.of(
+            new TaskOption("Option A", true),
+            new TaskOption("Option B", false),
+            new TaskOption("Option C", false)
+        );
+
         return switch (type) {
             case OPEN_TEXT -> new OpenTextTask(testCourse, statement, 1);
-            case SINGLE_CHOICE -> new SingleChoiceTask(testCourse, statement, 1);
-            case MULTIPLE_CHOICE -> new MultipleChoiceTask(testCourse, statement, 1);
+            case SINGLE_CHOICE -> new SingleChoiceTask(testCourse, statement, 1, validOptions);
+            case MULTIPLE_CHOICE -> new MultipleChoiceTask(testCourse, statement, 1, validOptions);
         };
     }
 }
