@@ -46,6 +46,7 @@ public class TaskController {
     }
 
     @PostMapping("/task/new/singlechoice")
+    @Transactional
     public ResponseEntity newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
         long count = dto.options().stream().filter(NewSingleChoiceTaskDTO.TaskOptionDTO::isCorrect).count();
         if (count > 1) {
@@ -76,6 +77,7 @@ public class TaskController {
     }
 
     @PostMapping("/task/new/multiplechoice")
+    @Transactional
     public ResponseEntity newMultipleChoice(@RequestBody @Valid NewMultipleChoiceTaskDTO dto) {
         long correctCount = dto.options().stream().filter(NewMultipleChoiceTaskDTO.TaskOptionDTO::isCorrect).count();
         long wrongCount = dto.options().stream().filter(option -> !option.isCorrect()).count();
