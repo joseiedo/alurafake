@@ -18,4 +18,10 @@ public class ValidationExceptionHandler {
         List<ErrorItemDTO> errors = ex.getBindingResult().getFieldErrors().stream().map(ErrorItemDTO::new).toList();
         return ResponseEntity.badRequest().body(errors);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorItemDTO> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(new ErrorItemDTO("error", ex.getMessage()));
+    }
 }
