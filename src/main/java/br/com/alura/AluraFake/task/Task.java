@@ -11,10 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(
-        name = "Task",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"course_id", "statement"})}
-)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Task implements Comparable<Task> {

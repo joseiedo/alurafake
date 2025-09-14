@@ -6,24 +6,36 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.util.Assert;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 @Embeddable
-public record TaskOption(
-        @NotNull
-        @Size(min = 4, max = 80)
-        @Column(name = "option_text")
-        String option,
+public final class TaskOption {
+    @Column(name = "option_text")
+    @NotNull
+    @Size(min = 4, max = 80)
+    private String option;
+    @Column(name = "is_correct")
+    private @NotNull Boolean isCorrect;
 
-        @NotNull
-        @Column(name = "is_correct")
-        Boolean isCorrect
-) {
+    public TaskOption(
+            @NotNull
+            @Size(min = 4, max = 80)
+            String option,
 
-    public Boolean hasOptionText(String text){
+            @NotNull
+            Boolean isCorrect
+    ) {
+        Assert.notNull(option, "Received option must not be null");
+        Assert.notNull(isCorrect, "Received isCorrect must not be null");
+        this.option = option;
+        this.isCorrect = isCorrect;
+    }
+
+    @Deprecated
+    public TaskOption() {
+    }
+
+    public Boolean hasOptionText(String text) {
         Assert.notNull(text, "Received text should not be null");
         return this.option.equalsIgnoreCase(text);
     }
@@ -37,19 +49,42 @@ public record TaskOption(
     public static Boolean hasRepeatingOptions(@NotNull List<TaskOption> taskOptions) {
         Set<String> seen = new HashSet<>();
         return taskOptions.stream()
-                .map(taskOption -> taskOption.option().toLowerCase(Locale.ROOT))
+                .map(taskOption -> taskOption.getOption().toLowerCase(Locale.ROOT))
                 .anyMatch(option -> !seen.add(option));
     }
 
     public static Boolean hasOneCorrectOption(@NotNull List<TaskOption> taskOptions) {
         return taskOptions.stream()
-                .filter(TaskOption::isCorrect)
+                .filter(TaskOption::getCorrect)
                 .count() == 1;
     }
 
     public static Long countOptionsByIsCorrect(@NotNull List<TaskOption> taskOptions, Boolean isCorrect) {
         return taskOptions.stream()
-                .filter(taskOption -> taskOption.isCorrect == isCorrect)
+                .filter(taskOption -> taskOption.getCorrect().equals(isCorrect))
                 .count();
     }
+
+    public String getOption() {
+        return option;
+    }
+
+    public Boolean getCorrect() {
+        return isCorrect;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (TaskOption) obj;
+        return Objects.equals(this.option, that.option) &&
+                Objects.equals(this.isCorrect, that.isCorrect);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(option, isCorrect);
+    }
+
 }

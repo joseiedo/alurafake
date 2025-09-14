@@ -28,6 +28,7 @@ public abstract class TaskWithOptions extends Task {
         Assert.notNull(options, "options should not be null");
         Assert.isTrue(!TaskOption.isStatementInOptions(statement, options), "One of the received options is equal to the task statement");
         Assert.isTrue(!TaskOption.hasRepeatingOptions(options), "Received options has duplicated values");
+        this.options = options;
     }
 
     public List<TaskOption> getOptions() {
