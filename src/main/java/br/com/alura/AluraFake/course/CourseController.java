@@ -51,9 +51,19 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
+    @GetMapping("/course/{id}")
+    public ResponseEntity<?> findCourse(@PathVariable("id") Long id) {
+        Optional<Course> possibleCourse = courseRepository.findById(id);
+        if (possibleCourse.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NotFoundItemDTO(Course.class));
+        }
+
+        return ResponseEntity.ok(FindCourseDTO.fromModel(possibleCourse.get()));
+    }
+
     @Transactional
     @PostMapping("/course/{id}/publish")
-    public ResponseEntity publishCourse(@PathVariable("id") Long id) {
+    public ResponseEntity<?> publishCourse(@PathVariable("id") Long id) {
         Optional<Course> possibleCourse = courseRepository.findById(id);
         if (possibleCourse.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NotFoundItemDTO(Course.class));

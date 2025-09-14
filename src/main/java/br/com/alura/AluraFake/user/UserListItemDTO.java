@@ -4,14 +4,20 @@ import java.io.Serializable;
 
 public class UserListItemDTO implements Serializable {
 
+    private Long id;
     private String name;
     private String email;
     private Role role;
 
     public UserListItemDTO(User user) {
+        this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
         this.role = user.getRole();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {

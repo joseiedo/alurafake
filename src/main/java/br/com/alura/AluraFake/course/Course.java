@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -103,6 +101,10 @@ public class Course {
         return this.orderedTasks.hasTaskWithStatement(statement);
     }
 
+    public boolean canAcceptOrder(Integer order) {
+        return this.orderedTasks.canAcceptOrder(order);
+    }
+
     public void addTask(Task task){
        Assert.isTrue(this.isBuilding(), "Course can't receive more tasks when not in BUILDING status");
        Assert.isTrue(!this.hasTaskWithStatement(task.getStatement()), "Course can't have multiple tasks with the same statement");
@@ -118,6 +120,6 @@ public class Course {
     }
 
     public SortedSet<Task> getTasks() {
-        return tasks;
+        return this.orderedTasks.getTasks();
     }
 }

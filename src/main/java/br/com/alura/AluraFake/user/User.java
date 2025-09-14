@@ -20,7 +20,8 @@ public class User {
     private String password;
 
     @Deprecated
-    public User() {}
+    public User() {
+    }
 
     public User(String name, String email, Role role, String password) {
         this.name = name;
@@ -31,6 +32,10 @@ public class User {
 
     public User(String name, String email, Role role) {
         this(name, email, role, PasswordGeneration.generatePassword());
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public LocalDateTime getCreatedAt() {
