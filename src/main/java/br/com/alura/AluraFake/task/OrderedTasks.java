@@ -73,4 +73,19 @@ public class OrderedTasks {
     private Boolean isOrderInUse(Integer order) {
         return tasks.stream().anyMatch(existingTask -> Objects.equals(existingTask.getOrder(), order));
     }
+
+    public Boolean hasContinuousTaskSequence() {
+        if (tasks.isEmpty()) return true;
+        if (tasks.first().getOrder() != 1) return false;
+        if (tasks.size() == 1) return true;
+
+        List<Task> sortedTasks = tasks.stream().sorted().toList();
+        for (int index = 1; index < sortedTasks.size(); index++) {
+            Task previousTask = sortedTasks.get(index - 1);
+            if (!Objects.equals(sortedTasks.get(index).getOrderDistance(previousTask), MAX_GAP_BETWEEN_TASK_ORDER)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

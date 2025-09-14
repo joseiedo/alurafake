@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Entity
@@ -27,7 +28,7 @@ public class Course {
     private LocalDateTime publishedAt;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "course", fetch = FetchType.LAZY)
-    private List<Task> tasks;
+    private SortedSet<Task> tasks;
 
     @Transient
     private OrderedTasks orderedTasks;
@@ -41,7 +42,7 @@ public class Course {
         this.instructor = instructor;
         this.description = description;
         this.status = Status.BUILDING;
-        this.tasks = new ArrayList<>();
+        this.tasks = new TreeSet<>();
         this.orderedTasks = new OrderedTasks(this.tasks);
     }
 
@@ -94,5 +95,9 @@ public class Course {
        Assert.isTrue(this.isBuilding(), "Course can't receive more tasks when not in BUILDING status");
        Assert.isTrue(!this.hasTaskWithStatement(task.getStatement()), "Course can't have multiple tasks with the same statement");
        this.orderedTasks.add(task);
+    }
+
+    public Boolean hasContinuousTaskSequence() {
+        return this.orderedTasks.hasContinuousTaskSequence();
     }
 }

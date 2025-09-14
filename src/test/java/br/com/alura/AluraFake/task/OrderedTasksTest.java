@@ -193,4 +193,114 @@ class OrderedTasksTest {
         assertTrue(organizer.hasValidRangeGaps(newTask));
     }
 
+    @Test
+    void hasContinuousTaskSequence__should_return_true_for_empty_task_list() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        assertTrue(organizer.hasContinuousTaskSequence());
+    }
+
+    @Test
+    void hasContinuousTaskSequence__should_return_true_for_single_task_starting_at_one() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask task = new OpenTextTask(mockCourse, "Task 1", 1);
+        tasks.add(task);
+
+        assertTrue(organizer.hasContinuousTaskSequence());
+    }
+
+    @Test
+    void hasContinuousTaskSequence__should_return_false_for_single_task_not_starting_at_one() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask task = new OpenTextTask(mockCourse, "Task 2", 2);
+        tasks.add(task);
+
+        assertFalse(organizer.hasContinuousTaskSequence());
+    }
+
+    @Test
+    void hasContinuousTaskSequence__should_return_true_for_continuous_sequence_starting_at_one() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
+        OpenTextTask task2 = new OpenTextTask(mockCourse, "Task 2", 2);
+        OpenTextTask task3 = new OpenTextTask(mockCourse, "Task 3", 3);
+
+        tasks.add(task1);
+        tasks.add(task2);
+        tasks.add(task3);
+
+        assertTrue(organizer.hasContinuousTaskSequence());
+    }
+
+    @Test
+    void hasContinuousTaskSequence__should_return_false_for_sequence_with_gaps() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
+        OpenTextTask task3 = new OpenTextTask(mockCourse, "Task 3", 3);
+        OpenTextTask task4 = new OpenTextTask(mockCourse, "Task 4", 4);
+
+        tasks.add(task1);
+        tasks.add(task3);
+        tasks.add(task4);
+
+        assertFalse(organizer.hasContinuousTaskSequence());
+    }
+
+    @Test
+    void hasContinuousTaskSequence__should_return_false_when_sequence_does_not_start_at_one() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask task2 = new OpenTextTask(mockCourse, "Task 2", 2);
+        OpenTextTask task3 = new OpenTextTask(mockCourse, "Task 3", 3);
+        OpenTextTask task4 = new OpenTextTask(mockCourse, "Task 4", 4);
+
+        tasks.add(task2);
+        tasks.add(task3);
+        tasks.add(task4);
+
+        assertFalse(organizer.hasContinuousTaskSequence());
+    }
+
+    @Test
+    void hasContinuousTaskSequence__should_return_true_for_unordered_continuous_sequence() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask task3 = new OpenTextTask(mockCourse, "Task 3", 3);
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
+        OpenTextTask task2 = new OpenTextTask(mockCourse, "Task 2", 2);
+
+        tasks.add(task3);
+        tasks.add(task1);
+        tasks.add(task2);
+
+        assertTrue(organizer.hasContinuousTaskSequence());
+    }
+
+    @Test
+    void hasContinuousTaskSequence__should_return_false_for_multiple_gaps_in_sequence() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
+        OpenTextTask task4 = new OpenTextTask(mockCourse, "Task 4", 4);
+        OpenTextTask task7 = new OpenTextTask(mockCourse, "Task 7", 7);
+
+        tasks.add(task1);
+        tasks.add(task4);
+        tasks.add(task7);
+
+        assertFalse(organizer.hasContinuousTaskSequence());
+    }
+
 }
