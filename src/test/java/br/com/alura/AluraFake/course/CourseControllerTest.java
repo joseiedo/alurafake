@@ -168,7 +168,6 @@ class CourseControllerTest {
         User instructor = new User("Paulo", "paulo@alura.com.br", Role.INSTRUCTOR);
         Course course = new Course("Java Advanced", "Advanced Java Programming", instructor);
 
-        // Mock the validation methods since we can't easily create a real course with tasks in a unit test
         Course spyCourse = spy(course);
         when(spyCourse.getId()).thenReturn(1L);
         when(spyCourse.hasContinuousTaskSequence()).thenReturn(true);

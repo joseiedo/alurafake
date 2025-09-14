@@ -84,13 +84,19 @@ public class Course {
     }
 
     public void publish() {
-        if (status.equals(Status.PUBLISHED)) return;
+        Assert.isTrue(this.isBuilding(), "Course is not in BUILDING status");
+        Assert.isTrue(this.hasContinuousTaskSequence(), "Course task sequence is not continuous");
+        Assert.isTrue(this.hasAllTaskTypes(), "Course must have at least one activity of each type");
         this.status = Status.PUBLISHED;
         this.publishedAt = LocalDateTime.now();
     }
 
     public boolean isBuilding() {
         return Status.BUILDING.equals(this.status);
+    }
+
+    public boolean isPublished() {
+        return Status.PUBLISHED.equals(this.status);
     }
 
     public boolean hasTaskWithStatement(String statement) {
@@ -109,5 +115,9 @@ public class Course {
 
     public Boolean hasAllTaskTypes() {
         return this.orderedTasks.hasAllTaskTypes();
+    }
+
+    public SortedSet<Task> getTasks() {
+        return tasks;
     }
 }
