@@ -37,10 +37,10 @@ public class OrderedTasks {
     public Boolean hasValidOrderGaps(@NotNull Task task) {
         Assert.notNull(task, "Received task can't be null");
         Assert.isTrue(hasContinuousTaskSequence(), "Tasks are not in a continuous sequence");
-        return canAcceptOrder(task.getOrder());
+        return isOrderInSequence(task.getOrder());
     }
 
-    public Boolean canAcceptOrder(@NotNull Integer order) {
+    public Boolean isOrderInSequence(@NotNull Integer order) {
         if (tasks.isEmpty()) {
             return order == 1;
         }

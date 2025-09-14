@@ -101,8 +101,8 @@ public class Course {
         return this.orderedTasks.hasTaskWithStatement(statement);
     }
 
-    public boolean canAcceptOrder(Integer order) {
-        return this.orderedTasks.canAcceptOrder(order);
+    public boolean isOrderPlacementValid(Integer order) {
+        return this.orderedTasks.isOrderInSequence(order);
     }
 
     public void addTask(Task task){

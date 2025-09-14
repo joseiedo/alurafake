@@ -19,9 +19,12 @@ public class TaskController {
 
     private final CourseRepository courseRepository;
 
-    public TaskController(TaskRepository taskRepository, CourseRepository courseRepository) {
+    private final CourseCanAcceptTaskValidator courseCanAcceptTaskValidator;
+
+    public TaskController(TaskRepository taskRepository, CourseRepository courseRepository, CourseCanAcceptTaskValidator courseCanAcceptTaskValidator) {
         this.taskRepository = taskRepository;
         this.courseRepository = courseRepository;
+        this.courseCanAcceptTaskValidator = courseCanAcceptTaskValidator;
     }
 
     @PostMapping("/task/new/opentext")
@@ -32,17 +35,10 @@ public class TaskController {
             return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
-        Course course = possibleCourse.get();
-        if (!course.isBuilding()) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course can't have new tasks when not in BUILDING status"));
-        }
+        Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());
 
-        if (course.hasTaskWithStatement(dto.statement())) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("statement", "Course can't have tasks with the same statement"));
-        }
-
-        if (!course.canAcceptOrder(dto.order())) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("order", "Order is breaking the sequence"));
+        if (error.isPresent()) {
+            return ResponseEntity.badRequest().body(error);
         }
 
         Task task = dto.toModel(courseRepository);
@@ -64,17 +60,9 @@ public class TaskController {
             return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
-        Course course = possibleCourse.get();
-        if (!course.isBuilding()) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course can't have new tasks when not in BUILDING status"));
-        }
-
-        if (course.hasTaskWithStatement(dto.statement())) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("statement", "Course can't have tasks with the same statement"));
-        }
-
-        if (!course.canAcceptOrder(dto.order())) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("order", "Order is breaking the sequence"));
+        Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());
+        if (error.isPresent()) {
+            return ResponseEntity.badRequest().body(error);
         }
 
         SingleChoiceTask task = dto.toModel(courseRepository);
@@ -96,17 +84,9 @@ public class TaskController {
             return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
-        Course course = possibleCourse.get();
-        if (!course.isBuilding()) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course can't have new tasks when not in BUILDING status"));
-        }
-
-        if (course.hasTaskWithStatement(dto.statement())) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("statement", "Course can't have tasks with the same statement"));
-        }
-
-        if (!course.canAcceptOrder(dto.order())) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("order", "Order is breaking the sequence"));
+        Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());
+        if (error.isPresent()) {
+            return ResponseEntity.badRequest().body(error);
         }
 
         MultipleChoiceTask task = dto.toModel(courseRepository);
