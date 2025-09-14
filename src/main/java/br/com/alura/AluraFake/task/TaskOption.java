@@ -6,6 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.util.Assert;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 @Embeddable
 public record TaskOption(
         @NotNull
@@ -20,6 +25,19 @@ public record TaskOption(
 
     public Boolean hasOptionText(String text){
         Assert.notNull(text, "Received text should not be null");
-        return this.option.equals(text);
+        return this.option.equalsIgnoreCase(text);
+    }
+
+    public static boolean isStatementInOptions(@NotNull String statement, @NotNull List<TaskOption> taskOptions) {
+        Assert.notNull(statement, "Received statement should not be null");
+        Assert.notNull(taskOptions, "Received taskOptions should not be null");
+        return taskOptions.stream().anyMatch(taskOption -> taskOption.hasOptionText(statement));
+    }
+
+    public static boolean hasRepeatingOptions(@NotNull List<TaskOption> taskOptions) {
+        Set<String> seen = new HashSet<>();
+        return taskOptions.stream()
+                .map(taskOption -> taskOption.option().toLowerCase(Locale.ROOT))
+                .anyMatch(option -> !seen.add(option));
     }
 }
