@@ -18,8 +18,9 @@ public class SingleChoiceTask extends TaskWithOptions {
     public SingleChoiceTask() {
     }
 
-    public SingleChoiceTask(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order, @NotNull @Size(min = 3, max = 5) List<TaskOption> options) {
+    public SingleChoiceTask(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order, @NotNull @Size(min = 2, max = 5) List<TaskOption> options) {
         super(course, statement, order, options);
+        Assert.isTrue(options.size() >= 2 && options.size() <= 5, "options has an invalid size");
         Assert.isTrue(TaskOption.hasOneCorrectOption(options), "Task must have one option with isCorrect true");
     }
 

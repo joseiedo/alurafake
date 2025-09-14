@@ -19,6 +19,7 @@ public record NewSingleChoiceTaskDTO(
         Integer order,
 
         @NotNull
+        @Size(min = 2, max = 5)
         List<TaskOptionDTO> options
 ) {
 

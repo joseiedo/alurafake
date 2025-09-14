@@ -248,6 +248,41 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void shouldRejectSingleChoiceTask_when_has_too_few_options() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].field").value("options"))
+                .andExpect(jsonPath("$[0].message").value("size must be between 2 and 5"));
+    }
+
+    @Test
+    public void shouldRejectSingleChoiceTask_when_has_too_many_options() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is scripting language", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is assembly language", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is machine language", false)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].field").value("options"))
+                .andExpect(jsonPath("$[0].message").value("size must be between 2 and 5"));
+    }
+
+    @Test
     public void shouldCreateMultipleChoiceTaskSuccessfully_when_has_valid_options() throws Exception {
         List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
                 new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),

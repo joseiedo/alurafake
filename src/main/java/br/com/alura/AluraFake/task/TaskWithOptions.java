@@ -23,10 +23,9 @@ public abstract class TaskWithOptions extends Task {
     public TaskWithOptions() {
     }
 
-    protected TaskWithOptions(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order, @NotNull @Size(min = 3, max = 5) List<TaskOption> options) {
+    protected TaskWithOptions(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order, @NotNull List<TaskOption> options) {
         super(course, statement, order);
         Assert.notNull(options, "options should not be null");
-        Assert.isTrue(options.size() >= 3 && options.size() <= 5, "options has an invalid size");
         Assert.isTrue(!TaskOption.isStatementInOptions(statement, options), "One of the received options is equal to the task statement");
         Assert.isTrue(!TaskOption.hasRepeatingOptions(options), "Received options has duplicated values");
     }
