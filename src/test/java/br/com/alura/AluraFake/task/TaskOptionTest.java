@@ -64,4 +64,43 @@ class TaskOptionTest {
         List<TaskOption> options = List.of();
         assertFalse(TaskOption.hasRepeatingOptions(options));
     }
+
+    @Test
+    void should_return_true_when_options_have_exactly_one_correct_option() {
+        List<TaskOption> options = List.of(
+                new TaskOption("Object-oriented language", true),
+                new TaskOption("Platform independent", false),
+                new TaskOption("Compiled language", false)
+        );
+
+        assertTrue(TaskOption.hasOneCorrectOption(options));
+    }
+
+    @Test
+    void should_return_false_when_options_have_no_correct_option() {
+        List<TaskOption> options = List.of(
+                new TaskOption("Object-oriented language", false),
+                new TaskOption("Platform independent", false),
+                new TaskOption("Compiled language", false)
+        );
+
+        assertFalse(TaskOption.hasOneCorrectOption(options));
+    }
+
+    @Test
+    void should_return_false_when_options_have_multiple_correct_options() {
+        List<TaskOption> options = List.of(
+                new TaskOption("Object-oriented language", true),
+                new TaskOption("Platform independent", true),
+                new TaskOption("Compiled language", false)
+        );
+
+        assertFalse(TaskOption.hasOneCorrectOption(options));
+    }
+
+    @Test
+    void should_return_false_when_checking_empty_options_for_correct_option() {
+        List<TaskOption> options = List.of();
+        assertFalse(TaskOption.hasOneCorrectOption(options));
+    }
 }

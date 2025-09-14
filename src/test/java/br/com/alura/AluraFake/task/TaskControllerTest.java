@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -139,7 +140,7 @@ public class TaskControllerTest {
         NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(1L, "New statement", 2);
         User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
         Course course = new Course("Java Basics", "Introduction to Java", instructor);
-        
+
         OpenTextTask existingTask = new OpenTextTask(course, "Existing statement", 1);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
@@ -148,6 +149,102 @@ public class TaskControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldCreateSingleChoiceTaskSuccessfully_when_has_exactly_one_correct_option() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
+
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        Course buildingCourse = new Course("Java Basics", "Introduction to Java", instructor);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(buildingCourse));
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldRejectSingleChoiceTask_when_has_no_correct_option() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("options"))
+                .andExpect(jsonPath("$.message").value("Task must have at least one option with isCorrect as true"));
+    }
+
+    @Test
+    public void shouldRejectSingleChoiceTask_when_has_multiple_correct_options() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is platform independent", true),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("options"))
+                .andExpect(jsonPath("$.message").value("More than one option has isCorrect as true"));
+    }
+
+    @Test
+    public void shouldRejectSingleChoiceTask_when_course_is_published() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
+
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        Course publishedCourse = new Course("Java Basics", "Introduction to Java", instructor);
+        publishedCourse.setStatus(Status.PUBLISHED);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(publishedCourse));
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("courseId"))
+                .andExpect(jsonPath("$.message").value("Course can't have new tasks when not in BUILDING status"));
+    }
+
+    @Test
+    public void shouldRejectSingleChoiceTask_when_course_not_found() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(999L, "What is Java?", 1, options);
+
+        when(courseRepository.findById(999L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("courseId"))
+                .andExpect(jsonPath("$.message").value("Course not found"));
     }
 
 }

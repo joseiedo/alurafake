@@ -40,4 +40,10 @@ public record TaskOption(
                 .map(taskOption -> taskOption.option().toLowerCase(Locale.ROOT))
                 .anyMatch(option -> !seen.add(option));
     }
+
+    public static boolean hasOneCorrectOption(@NotNull List<TaskOption> taskOptions) {
+        return taskOptions.stream()
+                .filter(TaskOption::isCorrect)
+                .count() == 1;
+    }
 }

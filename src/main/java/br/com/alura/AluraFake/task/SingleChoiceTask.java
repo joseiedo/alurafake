@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class SingleChoiceTask extends TaskWithOptions {
 
     public SingleChoiceTask(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order, @NotNull @Size(min = 3, max = 5) List<TaskOption> options) {
         super(course, statement, order, options);
+        Assert.isTrue(TaskOption.hasOneCorrectOption(options), "Task must have one option with isCorrect true");
     }
 
     @Override

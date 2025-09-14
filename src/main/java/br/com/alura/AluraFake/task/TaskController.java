@@ -46,7 +46,32 @@ public class TaskController {
     }
 
     @PostMapping("/task/new/singlechoice")
-    public ResponseEntity newSingleChoice() {
+    public ResponseEntity newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
+        long count = dto.options().stream().filter(NewSingleChoiceTaskDTO.TaskOptionDTO::isCorrect).count();
+        if (count > 1) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", "More than one option has isCorrect as true"));
+        }
+        if (count < 1) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("options", "Task must have at least one option with isCorrect as true"));
+        }
+
+        Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());
+        if (possibleCourse.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
+        }
+
+        Course course = possibleCourse.get();
+        if (!course.isBuilding()) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course can't have new tasks when not in BUILDING status"));
+        }
+
+        if (course.hasTaskWithStatement(dto.statement())) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("statement", "Course can't have tasks with the same statement"));
+        }
+
+        SingleChoiceTask task = dto.toModel(courseRepository);
+        taskRepository.save(task);
+
         return ResponseEntity.ok().build();
     }
 
