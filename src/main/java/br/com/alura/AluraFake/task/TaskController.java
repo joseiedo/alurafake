@@ -39,6 +39,10 @@ public class TaskController {
             return ResponseEntity.badRequest().body(new ErrorItemDTO("statement", "Course can't have tasks with the same statement"));
         }
 
+        if (!course.canAcceptOrder(dto.order())) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("order", "Order is breaking the sequence"));
+        }
+
         Task task = dto.toModel(courseRepository);
         taskRepository.save(task);
 
@@ -68,6 +72,10 @@ public class TaskController {
 
         if (course.hasTaskWithStatement(dto.statement())) {
             return ResponseEntity.badRequest().body(new ErrorItemDTO("statement", "Course can't have tasks with the same statement"));
+        }
+
+        if (!course.canAcceptOrder(dto.order())) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("order", "Order is breaking the sequence"));
         }
 
         SingleChoiceTask task = dto.toModel(courseRepository);
@@ -101,6 +109,10 @@ public class TaskController {
 
         if (course.hasTaskWithStatement(dto.statement())) {
             return ResponseEntity.badRequest().body(new ErrorItemDTO("statement", "Course can't have tasks with the same statement"));
+        }
+
+        if (!course.canAcceptOrder(dto.order())) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("order", "Order is breaking the sequence"));
         }
 
         MultipleChoiceTask task = dto.toModel(courseRepository);

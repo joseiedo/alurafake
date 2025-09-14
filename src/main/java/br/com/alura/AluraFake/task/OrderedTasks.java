@@ -22,7 +22,7 @@ public class OrderedTasks {
 
     public void add(Task task) {
         Assert.isTrue(hasOrderRespectingTasksSize(task), "Task order value is higher than list size");
-        Assert.isTrue(hasValidRangeGaps(task), "Task has an order with an invalid gap between existing tasks");
+        Assert.isTrue(hasValidOrderGaps(task), "Task has an order with an invalid gap between existing tasks");
         if (isOrderInUse(task.getOrder())) {
             shiftTasksWithOrderHigherOrEqualTo(task.getOrder());
         }
@@ -34,20 +34,19 @@ public class OrderedTasks {
         return task.getOrder() <= tasks.size() + 1;
     }
 
-    public Boolean hasValidRangeGaps(@NotNull Task task) {
+    public Boolean hasValidOrderGaps(@NotNull Task task) {
         Assert.notNull(task, "Received task can't be null");
+        Assert.isTrue(hasContinuousTaskSequence(), "Tasks are not in a continuous sequence");
+        return canAcceptOrder(task.getOrder());
+    }
 
-        Optional<Task> lower = Optional.ofNullable(tasks.lower(task));
-        if (lower.isPresent() && lower.get().getOrderDistance(task) > MAX_GAP_BETWEEN_TASK_ORDER) {
-            return false;
+    public Boolean canAcceptOrder(@NotNull Integer order) {
+        if (tasks.isEmpty()) {
+            return order == 1;
         }
 
-        Optional<Task> higher = Optional.ofNullable(tasks.higher(task));
-        if (higher.isPresent() && higher.get().getOrderDistance(task) > MAX_GAP_BETWEEN_TASK_ORDER) {
-            return false;
-        }
-
-        return true;
+        Integer lastOrder = tasks.last().getOrder();
+        return order >= 1 && order - lastOrder <= MAX_GAP_BETWEEN_TASK_ORDER;
     }
 
     public Boolean hasTaskWithStatement(String statement) {

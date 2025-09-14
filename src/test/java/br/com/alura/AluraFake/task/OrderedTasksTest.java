@@ -8,13 +8,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.doReturn;
 
 class OrderedTasksTest {
 
@@ -116,17 +117,17 @@ class OrderedTasksTest {
     }
 
     @Test
-    void hasValidRangeGaps__should_return_true_for_task_in_empty_organizer() {
+    void hasValidOrderGaps__should_return_true_for_task_in_empty_organizer() {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
         OpenTextTask task = new OpenTextTask(mockCourse, "First task", 1);
 
-        assertTrue(organizer.hasValidRangeGaps(task));
+        assertTrue(organizer.hasValidOrderGaps(task));
     }
 
     @Test
-    void hasValidRangeGaps__should_return_false_when_task_creates_invalid_gap_in_sequence() {
+    void hasValidOrderGaps__should_return_false_when_task_creates_invalid_gap_in_sequence() {
         TreeSet<Task> tasks = new TreeSet<>();
         OrderedTasks organizer = new OrderedTasks(tasks);
 
@@ -135,62 +136,38 @@ class OrderedTasksTest {
 
         OpenTextTask newTask = new OpenTextTask(mockCourse, "Task 2", 3);
 
-        assertFalse(organizer.hasValidRangeGaps(newTask));
+        assertFalse(organizer.hasValidOrderGaps(newTask));
     }
 
     @Test
-    void hasValidRangeGaps__should_return_false_when_task_creates_invalid_gap_with_lower_neighbor() {
+    void hasValidOrderGaps__should_return_false_when_task_creates_invalid_gap_with_lower_neighbor() {
         TreeSet<Task> tasks = new TreeSet<>();
-        OrderedTasks organizer = new OrderedTasks(tasks);
+        OrderedTasks organizer = spy(new OrderedTasks(tasks));
 
         OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
         tasks.add(task1);
 
-        OpenTextTask newTask = new OpenTextTask(mockCourse, "Task with gap", 3);
-
-        assertFalse(organizer.hasValidRangeGaps(newTask));
-    }
-
-    @Test
-    void hasValidRangeGaps__should_return_false_when_task_creates_invalid_gap_with_higher_neighbor() {
-        TreeSet<Task> tasks = new TreeSet<>();
-        OrderedTasks organizer = new OrderedTasks(tasks);
-
-        OpenTextTask task5 = new OpenTextTask(mockCourse, "Task 5", 5);
-        tasks.add(task5);
+        doReturn(true).when(organizer).hasContinuousTaskSequence();
 
         OpenTextTask newTask = new OpenTextTask(mockCourse, "Task with gap", 3);
 
-        assertFalse(organizer.hasValidRangeGaps(newTask));
+        assertFalse(organizer.hasValidOrderGaps(newTask));
     }
 
-    @Test
-    void hasValidRangeGaps__should_return_false_when_task_creates_gaps_with_both_neighbors() {
-        TreeSet<Task> tasks = new TreeSet<>();
-        OrderedTasks organizer = new OrderedTasks(tasks);
-
-        OpenTextTask task1 = new OpenTextTask(mockCourse, "Task 1", 1);
-        OpenTextTask task5 = new OpenTextTask(mockCourse, "Task 5", 5);
-
-        tasks.add(task1);
-        tasks.add(task5);
-
-        OpenTextTask newTask = new OpenTextTask(mockCourse, "Task with gaps", 3);
-
-        assertFalse(organizer.hasValidRangeGaps(newTask));
-    }
 
     @Test
-    void hasValidRangeGaps__should_return_true_when_same_order_as_existing_task() {
+    void hasValidOrderGaps__should_return_true_when_same_order_as_existing_task() {
         TreeSet<Task> tasks = new TreeSet<>();
-        OrderedTasks organizer = new OrderedTasks(tasks);
+        OrderedTasks organizer = spy(new OrderedTasks(tasks));
 
         OpenTextTask existingTask = new OpenTextTask(mockCourse, "Existing task", 2);
         tasks.add(existingTask);
 
+        when(organizer.hasContinuousTaskSequence()).thenReturn(true);
+
         OpenTextTask newTask = new OpenTextTask(mockCourse, "New task", 2);
 
-        assertTrue(organizer.hasValidRangeGaps(newTask));
+        assertTrue(organizer.hasValidOrderGaps(newTask));
     }
 
     @Test
