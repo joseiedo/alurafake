@@ -111,4 +111,72 @@ class CourseControllerTest {
                 .andExpect(jsonPath("$[2].description").value("Curso de spring"));
     }
 
+    @Test
+    void publishCourse__should_return_not_found_when_course_does_not_exist() throws Exception {
+        when(courseRepository.findById(999L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/course/999/publish"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Course not found"));
+    }
+
+    @Test
+    void publishCourse__should_return_bad_request_when_course_is_not_building() throws Exception {
+        User instructor = new User("Paulo", "paulo@alura.com.br", Role.INSTRUCTOR);
+        Course course = new Course("Java", "Curso de Java", instructor);
+        course.setStatus(Status.PUBLISHED);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        mockMvc.perform(post("/course/1/publish"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("course"))
+                .andExpect(jsonPath("$.message").value("Course is not in BUILDING status"));
+    }
+
+    @Test
+    void publishCourse__should_return_bad_request_when_task_sequence_is_not_continuous() throws Exception {
+        Course course = mock(Course.class);
+
+        when(course.isBuilding()).thenReturn(true);
+        when(course.hasContinuousTaskSequence()).thenReturn(false);
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        mockMvc.perform(post("/course/1/publish"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("tasks"))
+                .andExpect(jsonPath("$.message").value("Course task sequence is not continuous"));
+    }
+
+    @Test
+    void publishCourse__should_return_bad_request_when_course_does_not_have_all_task_types() throws Exception {
+        Course course = mock(Course.class);
+
+        when(course.isBuilding()).thenReturn(true);
+        when(course.hasContinuousTaskSequence()).thenReturn(true);
+        when(course.hasAllTaskTypes()).thenReturn(false);
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        mockMvc.perform(post("/course/1/publish"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("tasks"))
+                .andExpect(jsonPath("$.message").value("Course must have at least one activity of each type"));
+    }
+
+    @Test
+    void publishCourse__should_publish_course_when_all_validations_pass() throws Exception {
+        Course course = mock(Course.class);
+
+        when(course.isBuilding()).thenReturn(true);
+        when(course.hasContinuousTaskSequence()).thenReturn(true);
+        when(course.hasAllTaskTypes()).thenReturn(true);
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        mockMvc.perform(post("/course/1/publish"))
+                .andExpect(status().isOk());
+
+        verify(course, times(1)).publish();
+        verify(courseRepository, times(1)).save(course);
+    }
+
 }

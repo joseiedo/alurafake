@@ -12,6 +12,7 @@ public class OrderedTasks {
     final Integer MAX_GAP_BETWEEN_TASK_ORDER = 1;
 
     public OrderedTasks(TreeSet<Task> tasks) {
+        Assert.notNull(tasks, "Received tasks must not be null");
         this.tasks = tasks;
     }
 
@@ -87,5 +88,13 @@ public class OrderedTasks {
             }
         }
         return true;
+    }
+
+    public Boolean hasAllTaskTypes() {
+        Set<Type> requiredTypes = Set.of(Type.values());
+        Set<Type> existingTypes = tasks.stream()
+                .map(Task::getType)
+                .collect(java.util.stream.Collectors.toSet());
+        return existingTypes.containsAll(requiredTypes);
     }
 }

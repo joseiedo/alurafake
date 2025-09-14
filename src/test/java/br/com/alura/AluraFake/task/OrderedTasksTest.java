@@ -303,4 +303,87 @@ class OrderedTasksTest {
         assertFalse(organizer.hasContinuousTaskSequence());
     }
 
+    @Test
+    void hasAllTaskTypes__should_return_true_when_empty_task_list() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        assertFalse(organizer.hasAllTaskTypes());
+    }
+
+    @Test
+    void hasAllTaskTypes__should_return_false_when_missing_task_types() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask openTextTask = new OpenTextTask(mockCourse, "Open text task", 1);
+
+        List<TaskOption> singleChoiceOptions = List.of(
+                new TaskOption("Option A", true),
+                new TaskOption("Option B", false)
+        );
+        SingleChoiceTask singleChoiceTask = new SingleChoiceTask(mockCourse, "Single choice task", 2, singleChoiceOptions);
+
+        tasks.add(openTextTask);
+        tasks.add(singleChoiceTask);
+
+        assertFalse(organizer.hasAllTaskTypes());
+    }
+
+    @Test
+    void hasAllTaskTypes__should_return_true_when_all_task_types_present() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask openTextTask = new OpenTextTask(mockCourse, "Open text task", 1);
+
+        List<TaskOption> singleChoiceOptions = List.of(
+                new TaskOption("Option A", true),
+                new TaskOption("Option B", false)
+        );
+        SingleChoiceTask singleChoiceTask = new SingleChoiceTask(mockCourse, "Single choice task", 2, singleChoiceOptions);
+
+        List<TaskOption> multipleChoiceOptions = List.of(
+                new TaskOption("Option A", true),
+                new TaskOption("Option B", true),
+                new TaskOption("Option C", false)
+        );
+        MultipleChoiceTask multipleChoiceTask = new MultipleChoiceTask(mockCourse, "Multiple choice task", 3, multipleChoiceOptions);
+
+        tasks.add(openTextTask);
+        tasks.add(singleChoiceTask);
+        tasks.add(multipleChoiceTask);
+
+        assertTrue(organizer.hasAllTaskTypes());
+    }
+
+    @Test
+    void hasAllTaskTypes__should_return_true_when_multiple_tasks_of_each_type() {
+        TreeSet<Task> tasks = new TreeSet<>();
+        OrderedTasks organizer = new OrderedTasks(tasks);
+
+        OpenTextTask openTextTask1 = new OpenTextTask(mockCourse, "Open text task 1", 1);
+        OpenTextTask openTextTask2 = new OpenTextTask(mockCourse, "Open text task 2", 2);
+
+        List<TaskOption> singleChoiceOptions = List.of(
+                new TaskOption("Option A", true),
+                new TaskOption("Option B", false)
+        );
+        SingleChoiceTask singleChoiceTask = new SingleChoiceTask(mockCourse, "Single choice task", 3, singleChoiceOptions);
+
+        List<TaskOption> multipleChoiceOptions = List.of(
+                new TaskOption("Option A", true),
+                new TaskOption("Option B", true),
+                new TaskOption("Option C", false)
+        );
+        MultipleChoiceTask multipleChoiceTask = new MultipleChoiceTask(mockCourse, "Multiple choice task", 4, multipleChoiceOptions);
+
+        tasks.add(openTextTask1);
+        tasks.add(openTextTask2);
+        tasks.add(singleChoiceTask);
+        tasks.add(multipleChoiceTask);
+
+        assertTrue(organizer.hasAllTaskTypes());
+    }
+
 }

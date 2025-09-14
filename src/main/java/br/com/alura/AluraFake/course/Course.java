@@ -83,6 +83,12 @@ public class Course {
         return publishedAt;
     }
 
+    public void publish() {
+        if (status.equals(Status.PUBLISHED)) return;
+        this.status = Status.PUBLISHED;
+        this.publishedAt = LocalDateTime.now();
+    }
+
     public boolean isBuilding() {
         return Status.BUILDING.equals(this.status);
     }
@@ -99,5 +105,9 @@ public class Course {
 
     public Boolean hasContinuousTaskSequence() {
         return this.orderedTasks.hasContinuousTaskSequence();
+    }
+
+    public Boolean hasAllTaskTypes() {
+        return this.orderedTasks.hasAllTaskTypes();
     }
 }

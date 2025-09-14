@@ -2,6 +2,7 @@ package br.com.alura.AluraFake.course;
 
 import br.com.alura.AluraFake.user.*;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
+import br.com.alura.AluraFake.util.NotFoundItemDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -50,8 +51,30 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
+    @Transactional
     @PostMapping("/course/{id}/publish")
     public ResponseEntity createCourse(@PathVariable("id") Long id) {
+        Optional<Course> possibleCourse = courseRepository.findById(id);
+        if (possibleCourse.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NotFoundItemDTO(Course.class));
+        }
+
+        Course course = possibleCourse.get();
+        if (!course.isBuilding()) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("course", "Course is not in BUILDING status"));
+        }
+
+        if (!course.hasContinuousTaskSequence()) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("tasks", "Course task sequence is not continuous"));
+        }
+
+        if (!course.hasAllTaskTypes()) {
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("tasks", "Course must have at least one activity of each type"));
+        }
+
+        course.publish();
+        courseRepository.save(course);
+
         return ResponseEntity.ok().build();
     }
 
