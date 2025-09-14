@@ -74,16 +74,19 @@ public class TaskRepositoryTest {
     }
 
     private Task createTaskByType(Type type, String statement) {
-        List<TaskOption> validOptions = List.of(
-            new TaskOption("Option A", true),
-            new TaskOption("Option B", false),
-            new TaskOption("Option C", false)
-        );
 
         return switch (type) {
             case OPEN_TEXT -> new OpenTextTask(testCourse, statement, 1);
-            case SINGLE_CHOICE -> new SingleChoiceTask(testCourse, statement, 1, validOptions);
-            case MULTIPLE_CHOICE -> new MultipleChoiceTask(testCourse, statement, 1, validOptions);
+            case SINGLE_CHOICE -> new SingleChoiceTask(testCourse, statement, 1, List.of(
+                new TaskOption("Option A", true),
+                new TaskOption("Option B", false),
+                new TaskOption("Option C", false)
+            ));
+            case MULTIPLE_CHOICE -> new MultipleChoiceTask(testCourse, statement, 1, List.of(
+                    new TaskOption("Option A", true),
+                    new TaskOption("Option B", true),
+                    new TaskOption("Option C", false)
+            ));
         };
     }
 }

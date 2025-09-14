@@ -28,22 +28,28 @@ public record TaskOption(
         return this.option.equalsIgnoreCase(text);
     }
 
-    public static boolean isStatementInOptions(@NotNull String statement, @NotNull List<TaskOption> taskOptions) {
+    public static Boolean isStatementInOptions(@NotNull String statement, @NotNull List<TaskOption> taskOptions) {
         Assert.notNull(statement, "Received statement should not be null");
         Assert.notNull(taskOptions, "Received taskOptions should not be null");
         return taskOptions.stream().anyMatch(taskOption -> taskOption.hasOptionText(statement));
     }
 
-    public static boolean hasRepeatingOptions(@NotNull List<TaskOption> taskOptions) {
+    public static Boolean hasRepeatingOptions(@NotNull List<TaskOption> taskOptions) {
         Set<String> seen = new HashSet<>();
         return taskOptions.stream()
                 .map(taskOption -> taskOption.option().toLowerCase(Locale.ROOT))
                 .anyMatch(option -> !seen.add(option));
     }
 
-    public static boolean hasOneCorrectOption(@NotNull List<TaskOption> taskOptions) {
+    public static Boolean hasOneCorrectOption(@NotNull List<TaskOption> taskOptions) {
         return taskOptions.stream()
                 .filter(TaskOption::isCorrect)
                 .count() == 1;
+    }
+
+    public static Long countOptionsByIsCorrect(@NotNull List<TaskOption> taskOptions, Boolean isCorrect) {
+        return taskOptions.stream()
+                .filter(taskOption -> taskOption.isCorrect == isCorrect)
+                .count();
     }
 }

@@ -247,4 +247,101 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.message").value("Course not found"));
     }
 
+    @Test
+    public void shouldCreateMultipleChoiceTaskSuccessfully_when_has_valid_options() throws Exception {
+        List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is platform independent", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false)
+        );
+        NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(1L, "What are Java characteristics?", 1, options);
+
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        Course buildingCourse = new Course("Java Basics", "Introduction to Java", instructor);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(buildingCourse));
+
+        mockMvc.perform(post("/task/new/multiplechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldRejectMultipleChoiceTask_when_has_insufficient_correct_options() throws Exception {
+        List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is procedural only", false)
+        );
+        NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(1L, "What are Java characteristics?", 1, options);
+
+        mockMvc.perform(post("/task/new/multiplechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("options"))
+                .andExpect(jsonPath("$.message").value("Task must have at least 2 options with isCorrect as true"));
+    }
+
+    @Test
+    public void shouldRejectMultipleChoiceTask_when_has_insufficient_wrong_options() throws Exception {
+        List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is platform independent", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is compiled", true)
+        );
+        NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(1L, "What are Java characteristics?", 1, options);
+
+        mockMvc.perform(post("/task/new/multiplechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("options"))
+                .andExpect(jsonPath("$.message").value("Task must have at least 1 option with isCorrect as false"));
+    }
+
+    @Test
+    public void shouldRejectMultipleChoiceTask_when_course_is_published() throws Exception {
+        List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is platform independent", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false)
+        );
+        NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(1L, "What are Java characteristics?", 1, options);
+
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        Course publishedCourse = new Course("Java Basics", "Introduction to Java", instructor);
+        publishedCourse.setStatus(Status.PUBLISHED);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(publishedCourse));
+
+        mockMvc.perform(post("/task/new/multiplechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("courseId"))
+                .andExpect(jsonPath("$.message").value("Course can't have new tasks when not in BUILDING status"));
+    }
+
+    @Test
+    public void shouldRejectMultipleChoiceTask_when_course_not_found() throws Exception {
+        List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is platform independent", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false)
+        );
+        NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(999L, "What are Java characteristics?", 1, options);
+
+        when(courseRepository.findById(999L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/task/new/multiplechoice")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("courseId"))
+                .andExpect(jsonPath("$.message").value("Course not found"));
+    }
+
 }

@@ -103,4 +103,44 @@ class TaskOptionTest {
         List<TaskOption> options = List.of();
         assertFalse(TaskOption.hasOneCorrectOption(options));
     }
+
+    @Test
+    void should_count_correct_options_correctly() {
+        List<TaskOption> options = List.of(
+                new TaskOption("Java is object-oriented", true),
+                new TaskOption("Java is platform independent", true),
+                new TaskOption("Java is functional only", false)
+        );
+
+        assertEquals(2L, TaskOption.countOptionsByIsCorrect(options, true));
+    }
+
+    @Test
+    void should_count_wrong_options_correctly() {
+        List<TaskOption> options = List.of(
+                new TaskOption("Java is object-oriented", true),
+                new TaskOption("Java is functional only", false),
+                new TaskOption("Java is procedural only", false)
+        );
+
+        assertEquals(2L, TaskOption.countOptionsByIsCorrect(options, false));
+    }
+
+    @Test
+    void should_return_zero_when_no_matching_options() {
+        List<TaskOption> options = List.of(
+                new TaskOption("Java is object-oriented", true),
+                new TaskOption("Java is platform independent", true),
+                new TaskOption("Java is compiled", true)
+        );
+
+        assertEquals(0L, TaskOption.countOptionsByIsCorrect(options, false));
+    }
+
+    @Test
+    void should_return_zero_when_counting_empty_options() {
+        List<TaskOption> options = List.of();
+        assertEquals(0L, TaskOption.countOptionsByIsCorrect(options, true));
+        assertEquals(0L, TaskOption.countOptionsByIsCorrect(options, false));
+    }
 }
