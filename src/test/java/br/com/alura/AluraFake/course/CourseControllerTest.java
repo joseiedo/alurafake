@@ -165,18 +165,24 @@ class CourseControllerTest {
 
     @Test
     void publishCourse__should_publish_course_when_all_validations_pass() throws Exception {
-        Course course = mock(Course.class);
+        User instructor = new User("Paulo", "paulo@alura.com.br", Role.INSTRUCTOR);
+        Course course = new Course("Java Advanced", "Advanced Java Programming", instructor);
 
-        when(course.isBuilding()).thenReturn(true);
-        when(course.hasContinuousTaskSequence()).thenReturn(true);
-        when(course.hasAllTaskTypes()).thenReturn(true);
-        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        // Mock the validation methods since we can't easily create a real course with tasks in a unit test
+        Course spyCourse = spy(course);
+        when(spyCourse.getId()).thenReturn(1L);
+        when(spyCourse.hasContinuousTaskSequence()).thenReturn(true);
+        when(spyCourse.hasAllTaskTypes()).thenReturn(true);
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(spyCourse));
 
         mockMvc.perform(post("/course/1/publish"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Java Advanced"))
+                .andExpect(jsonPath("$.status").value("PUBLISHED"))
+                .andExpect(jsonPath("$.publishedAt").exists());
 
-        verify(course, times(1)).publish();
-        verify(courseRepository, times(1)).save(course);
+        verify(courseRepository, times(1)).save(spyCourse);
     }
 
 }

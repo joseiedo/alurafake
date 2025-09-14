@@ -53,7 +53,7 @@ public class CourseController {
 
     @Transactional
     @PostMapping("/course/{id}/publish")
-    public ResponseEntity createCourse(@PathVariable("id") Long id) {
+    public ResponseEntity publishCourse(@PathVariable("id") Long id) {
         Optional<Course> possibleCourse = courseRepository.findById(id);
         if (possibleCourse.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NotFoundItemDTO(Course.class));
@@ -75,7 +75,7 @@ public class CourseController {
         course.publish();
         courseRepository.save(course);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CoursePublishResponseDTO(course));
     }
 
 }
