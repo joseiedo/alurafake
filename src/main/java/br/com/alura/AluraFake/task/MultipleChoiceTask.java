@@ -24,8 +24,8 @@ public class MultipleChoiceTask extends TaskWithOptions {
     public MultipleChoiceTask(@NotNull Course course, @Size(min = 4, max = 255) String statement, @NotNull @Min(1) Integer order, @NotNull @Size(min = 3, max = 5) List<TaskOption> options) {
         super(course, statement, order, options);
         Assert.isTrue(options.size() >= 3 && options.size() <= 5, "options has an invalid size");
-        Assert.isTrue(TaskOption.countOptionsByIsCorrect(options, true) >= MIN_CORRECT_OPTIONS, "Not enough options with isCorrect true");
-        Assert.isTrue(TaskOption.countOptionsByIsCorrect(options, false) >= MIN_WRONG_OPTIONS, "Not enough options with isCorrect false");
+        Assert.isTrue(TaskOption.countCorrectOptions(options) >= MIN_CORRECT_OPTIONS, "Not enough options with isCorrect true");
+        Assert.isTrue(TaskOption.countIncorrectOptions(options) >= MIN_WRONG_OPTIONS, "Not enough options with isCorrect false");
     }
 
     @Override

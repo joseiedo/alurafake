@@ -102,7 +102,7 @@ public class Course {
     }
 
     public boolean isOrderPlacementValid(Integer order) {
-        return this.orderedTasks.isOrderInSequence(order);
+        return this.orderedTasks.isOrderRespectingSequence(order);
     }
 
     public void addTask(Task task){

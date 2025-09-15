@@ -59,9 +59,15 @@ public final class TaskOption {
                 .count() == 1;
     }
 
-    public static Long countOptionsByIsCorrect(@NotNull List<TaskOption> taskOptions, Boolean isCorrect) {
+    public static Long countCorrectOptions(@NotNull List<TaskOption> taskOptions) {
         return taskOptions.stream()
-                .filter(taskOption -> taskOption.getCorrect().equals(isCorrect))
+                .filter(TaskOption::getCorrect)
+                .count();
+    }
+
+    public static Long countIncorrectOptions(@NotNull List<TaskOption> taskOptions) {
+        return taskOptions.stream()
+                .filter(taskOption -> !taskOption.getCorrect())
                 .count();
     }
 

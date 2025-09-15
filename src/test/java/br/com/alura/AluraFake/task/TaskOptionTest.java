@@ -112,7 +112,7 @@ class TaskOptionTest {
                 new TaskOption("Java is functional only", false)
         );
 
-        assertEquals(2L, TaskOption.countOptionsByIsCorrect(options, true));
+        assertEquals(2L, TaskOption.countCorrectOptions(options));
     }
 
     @Test
@@ -123,7 +123,7 @@ class TaskOptionTest {
                 new TaskOption("Java is procedural only", false)
         );
 
-        assertEquals(2L, TaskOption.countOptionsByIsCorrect(options, false));
+        assertEquals(2L, TaskOption.countIncorrectOptions(options));
     }
 
     @Test
@@ -134,13 +134,13 @@ class TaskOptionTest {
                 new TaskOption("Java is compiled", true)
         );
 
-        assertEquals(0L, TaskOption.countOptionsByIsCorrect(options, false));
+        assertEquals(0L, TaskOption.countIncorrectOptions(options));
     }
 
     @Test
     void should_return_zero_when_counting_empty_options() {
         List<TaskOption> options = List.of();
-        assertEquals(0L, TaskOption.countOptionsByIsCorrect(options, true));
-        assertEquals(0L, TaskOption.countOptionsByIsCorrect(options, false));
+        assertEquals(0L, TaskOption.countCorrectOptions(options));
+        assertEquals(0L, TaskOption.countIncorrectOptions(options));
     }
 }
