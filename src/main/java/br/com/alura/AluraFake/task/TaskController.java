@@ -61,7 +61,7 @@ public class TaskController {
 
         Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());
         if (possibleCourse.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorItemDTO("courseId", "Course not found"));
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
         Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());
@@ -85,7 +85,7 @@ public class TaskController {
 
         Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());
         if (possibleCourse.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorItemDTO("courseId", "Course not found"));
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
         Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());
