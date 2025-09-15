@@ -1,6 +1,7 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.domain;
 
 import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.task.MultipleChoiceTask;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,7 @@ class OrderedTasksTest {
         }};
 
 
-        List<Task> orderedTasks = List.copyOf(organizer.tasks);
+        List<Task> orderedTasks = List.copyOf(organizer.getTasks());
         assertEquals(task1, orderedTasks.get(0));
         assertEquals(task2, orderedTasks.get(1));
         assertEquals(newTask, orderedTasks.get(2));

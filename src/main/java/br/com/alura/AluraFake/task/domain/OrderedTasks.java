@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.domain;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.util.Assert;
@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class OrderedTasks {
 
-    TreeSet<Task> tasks;
+    private final TreeSet<Task> tasks;
 
     final Integer MAX_GAP_BETWEEN_TASK_ORDER = 1;
 

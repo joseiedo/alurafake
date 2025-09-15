@@ -1,7 +1,7 @@
 package br.com.alura.AluraFake.course;
 
-import br.com.alura.AluraFake.task.OrderedTasks;
-import br.com.alura.AluraFake.task.Task;
+import br.com.alura.AluraFake.task.domain.OrderedTasks;
+import br.com.alura.AluraFake.task.domain.Task;
 import br.com.alura.AluraFake.user.User;
 import jakarta.persistence.*;
 import org.springframework.util.Assert;

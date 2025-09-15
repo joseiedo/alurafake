@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

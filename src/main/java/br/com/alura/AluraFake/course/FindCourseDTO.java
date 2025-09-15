@@ -1,7 +1,7 @@
 package br.com.alura.AluraFake.course;
 
-import br.com.alura.AluraFake.task.Task;
-import br.com.alura.AluraFake.task.Type;
+import br.com.alura.AluraFake.task.domain.Task;
+import br.com.alura.AluraFake.task.domain.Type;
 
 import java.util.List;
 
