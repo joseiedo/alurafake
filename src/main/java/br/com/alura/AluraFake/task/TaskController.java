@@ -7,6 +7,7 @@ import br.com.alura.AluraFake.task.domain.Task;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class TaskController {
     public ResponseEntity newOpenTextExercise(@RequestBody @Valid NewOpenTextTaskDTO dto) {
         Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());
         if (possibleCourse.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
         Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());
@@ -59,7 +60,7 @@ public class TaskController {
 
         Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());
         if (possibleCourse.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
         Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());
@@ -83,7 +84,7 @@ public class TaskController {
 
         Optional<Course> possibleCourse = courseRepository.findById(dto.courseId());
         if (possibleCourse.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("courseId", "Course not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorItemDTO("courseId", "Course not found"));
         }
 
         Optional<ErrorItemDTO> error = courseCanAcceptTaskValidator.validate(possibleCourse.get(), dto.statement(), dto.order());

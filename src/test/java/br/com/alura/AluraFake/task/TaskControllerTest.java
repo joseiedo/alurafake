@@ -87,7 +87,7 @@ public class TaskControllerTest {
         mockMvc.perform(post("/task/new/opentext")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course not found"));
     }
@@ -200,7 +200,7 @@ public class TaskControllerTest {
         mockMvc.perform(post("/task/new/singlechoice")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course not found"));
     }
@@ -345,7 +345,7 @@ public class TaskControllerTest {
         mockMvc.perform(post("/task/new/multiplechoice")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course not found"));
     }
