@@ -5,6 +5,8 @@ import br.com.alura.AluraFake.course.CourseRepository;
 import br.com.alura.AluraFake.user.User;
 import br.com.alura.AluraFake.user.UserRepository;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
+import br.com.alura.AluraFake.util.NotFoundItemDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +32,7 @@ public class InstructorController {
     public ResponseEntity getInstructorCourseReport(@PathVariable("id") Long id) {
         Optional<User> possibleUser = userRepository.findById(id);
         if (possibleUser.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new NotFoundItemDTO(User.class));
         }
 
         User user = possibleUser.get();
