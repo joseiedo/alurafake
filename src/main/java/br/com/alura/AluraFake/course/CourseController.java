@@ -44,7 +44,7 @@ public class CourseController {
     }
 
     @GetMapping("/course/all")
-    public ResponseEntity<List<CourseListItemDTO>> createCourse() {
+    public ResponseEntity<List<CourseListItemDTO>> listCourses() {
         List<CourseListItemDTO> courses = courseRepository.findAll().stream()
                 .map(CourseListItemDTO::new)
                 .toList();
