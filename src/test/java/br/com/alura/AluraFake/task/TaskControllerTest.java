@@ -3,8 +3,10 @@ package br.com.alura.AluraFake.task;
 import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseRepository;
 import br.com.alura.AluraFake.task.domain.SingleChoiceTask;
+import br.com.alura.AluraFake.task.MultipleChoiceTask;
 import br.com.alura.AluraFake.user.Role;
 import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.util.ErrorItemDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,11 +99,33 @@ public class TaskControllerTest {
         Course course = new Course("Java Basics", "Introduction to Java", instructor);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        when(courseCanAcceptTaskValidator.validate(course, dto.statement(), dto.order())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/task/new/opentext")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
+
+        verify(courseCanAcceptTaskValidator).validate(course, dto.statement(), dto.order());
+    }
+
+    @Test
+    public void newOpenTextTask__should_return_bad_request_when_course_can_not_accept_task() throws Exception {
+        NewOpenTextTaskDTO dto = new NewOpenTextTaskDTO(1L, "Valid statement", 1);
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        Course course = new Course("Java Basics", "Introduction to Java", instructor);
+
+        ErrorItemDTO validationError = new ErrorItemDTO("courseId", "Course can't have new tasks when not in BUILDING status");
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        when(courseCanAcceptTaskValidator.validate(course, dto.statement(), dto.order())).thenReturn(Optional.of(validationError));
+
+        mockMvc.perform(post("/task/new/opentext")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("courseId"))
+                .andExpect(jsonPath("$.message").value("Course can't have new tasks when not in BUILDING status"));
 
         verify(courseCanAcceptTaskValidator).validate(course, dto.statement(), dto.order());
     }
@@ -118,6 +142,7 @@ public class TaskControllerTest {
         Course course = new Course("Java Basics", "Introduction to Java", instructor);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        when(courseCanAcceptTaskValidator.validate(course, dto.statement(), dto.order())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/task/new/singlechoice")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -216,6 +241,31 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void newSingleChoiceTask__should_return_bad_request_when_course_can_not_accept_task() throws Exception {
+        List<NewSingleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewSingleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false)
+        );
+        NewSingleChoiceTaskDTO dto = new NewSingleChoiceTaskDTO(1L, "What is Java?", 1, options);
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        Course course = new Course("Java Basics", "Introduction to Java", instructor);
+
+        ErrorItemDTO validationError = new ErrorItemDTO("statement", "Course can't have tasks with the same statement");
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        when(courseCanAcceptTaskValidator.validate(course, dto.statement(), dto.order())).thenReturn(Optional.of(validationError));
+
+        mockMvc.perform(post("/task/new/singlechoice")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("statement"))
+                .andExpect(jsonPath("$.message").value("Course can't have tasks with the same statement"));
+
+        verify(courseCanAcceptTaskValidator).validate(course, dto.statement(), dto.order());
+    }
+
+    @Test
     public void newMultipleChoiceTask__should_create_task_successfully_when_has_valid_options() throws Exception {
         List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
                 new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
@@ -229,6 +279,7 @@ public class TaskControllerTest {
         Course course = new Course("Java Basics", "Introduction to Java", instructor);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        when(courseCanAcceptTaskValidator.validate(course, dto.statement(), dto.order())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/task/new/multiplechoice")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -297,6 +348,32 @@ public class TaskControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("courseId"))
                 .andExpect(jsonPath("$.message").value("Course not found"));
+    }
+
+    @Test
+    public void newMultipleChoiceTask__should_return_bad_request_when_course_can_not_accept_task() throws Exception {
+        List<NewMultipleChoiceTaskDTO.TaskOptionDTO> options = List.of(
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is object-oriented", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is platform independent", true),
+                new NewMultipleChoiceTaskDTO.TaskOptionDTO("Java is functional only", false)
+        );
+        NewMultipleChoiceTaskDTO dto = new NewMultipleChoiceTaskDTO(1L, "What are Java characteristics?", 1, options);
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        Course course = new Course("Java Basics", "Introduction to Java", instructor);
+
+        ErrorItemDTO validationError = new ErrorItemDTO("order", "Order placement is invalid");
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+        when(courseCanAcceptTaskValidator.validate(course, dto.statement(), dto.order())).thenReturn(Optional.of(validationError));
+
+        mockMvc.perform(post("/task/new/multiplechoice")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.field").value("order"))
+                .andExpect(jsonPath("$.message").value("Order placement is invalid"));
+
+        verify(courseCanAcceptTaskValidator).validate(course, dto.statement(), dto.order());
     }
 
 }
