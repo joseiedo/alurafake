@@ -79,7 +79,7 @@ public class CourseController {
         }
 
         if (!course.hasAllTaskTypes()) {
-            return ResponseEntity.badRequest().body(new ErrorItemDTO("tasks", "Course must have at least one activity of each type"));
+            return ResponseEntity.badRequest().body(new ErrorItemDTO("tasks", "Course must have at least one task of each type"));
         }
 
         course.publish();

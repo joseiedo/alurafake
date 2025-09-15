@@ -97,7 +97,7 @@ public class Course {
     public void publish() {
         Assert.isTrue(this.isBuilding(), "Course is not in BUILDING status");
         Assert.isTrue(this.hasContinuousTaskSequence(), "Course task sequence is not continuous");
-        Assert.isTrue(this.hasAllTaskTypes(), "Course must have at least one activity of each type");
+        Assert.isTrue(this.hasAllTaskTypes(), "Course must have at least one task of each type");
         this.status = Status.PUBLISHED;
         this.publishedAt = LocalDateTime.now();
     }

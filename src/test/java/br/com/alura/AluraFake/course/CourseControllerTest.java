@@ -160,7 +160,7 @@ class CourseControllerTest {
         mockMvc.perform(post("/course/1/publish"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("tasks"))
-                .andExpect(jsonPath("$.message").value("Course must have at least one activity of each type"));
+                .andExpect(jsonPath("$.message").value("Course must have at least one task of each type"));
     }
 
     @Test
