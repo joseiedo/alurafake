@@ -1,10 +1,29 @@
 package br.com.alura.AluraFake.task;
 
+import br.com.alura.AluraFake.course.Course;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.util.Assert;
 
 import java.util.*;
 
+/**
+ * Manages an ordered collection of tasks, ensuring proper sequence validation
+ * and automatic order adjustment when inserting new tasks.
+ *
+ * <p>This class maintains tasks in a continuous sequence starting from 1 (1,2,3...) with no gaps.
+ * When a new task is inserted at an existing order position, existing tasks are automatically
+ * shifted to higher orders to maintain the sequence.</p>
+ *
+ * <p>Key constraints enforced:</p>
+ * <ul>
+ *   <li>Tasks must have orders in continuous sequence (no gaps)</li>
+ *   <li>New task order cannot exceed collection size + 1</li>
+ *   <li>Automatic order shifting when inserting at existing positions</li>
+ *   <li>Validation for course publishing requirements (all task types present)</li>
+ * </ul>
+ *
+ * @see Task
+ */
 public class OrderedTasks {
 
     TreeSet<Task> tasks;
@@ -20,6 +39,14 @@ public class OrderedTasks {
         this(new TreeSet<>(tasks));
     }
 
+    /**
+     * Adds a task to the ordered collection, automatically handling order conflicts.
+     * If the task's order position is already occupied, existing tasks are shifted
+     * to higher orders to maintain continuous sequence.
+     *
+     * @param task the task to add
+     * @throws IllegalArgumentException if the task order is invalid
+     */
     public void add(Task task) {
         Assert.isTrue(hasOrderRespectingTasksSize(task), "Task order value is higher than list size");
         Assert.isTrue(hasValidOrderGaps(task), "Task has an order with an invalid gap between existing tasks");
@@ -29,6 +56,12 @@ public class OrderedTasks {
         tasks.add(task);
     }
 
+    /**
+     * Validates that the task's order doesn't exceed the allowed maximum.
+     *
+     * @param task the task to validate
+     * @return true if order is within valid range
+     */
     public Boolean hasOrderRespectingTasksSize(@NotNull Task task) {
         Assert.notNull(task, "Received task can't be null");
         return task.getOrder() <= tasks.size() + 1;
@@ -37,10 +70,16 @@ public class OrderedTasks {
     public Boolean hasValidOrderGaps(@NotNull Task task) {
         Assert.notNull(task, "Received task can't be null");
         Assert.isTrue(hasContinuousTaskSequence(), "Tasks are not in a continuous sequence");
-        return isOrderInSequence(task.getOrder());
+        return isOrderRespectingSequence(task.getOrder());
     }
 
-    public Boolean isOrderInSequence(@NotNull Integer order) {
+
+    /**
+     * Checks if the received order will cause any gaps in the tasks list
+     * @param order The order to check
+     * @return true if the order is respecting the sequence rule
+     */
+    public Boolean isOrderRespectingSequence(@NotNull Integer order) {
         if (tasks.isEmpty()) {
             return order == 1;
         }
@@ -74,6 +113,11 @@ public class OrderedTasks {
         return tasks.stream().anyMatch(existingTask -> Objects.equals(existingTask.getOrder(), order));
     }
 
+    /**
+     * Checks if all tasks form a continuous sequence starting from 1.
+     *
+     * @return true if tasks form a continuous sequence (1,2,3,...)
+     */
     public Boolean hasContinuousTaskSequence() {
         if (tasks.isEmpty()) return true;
         if (tasks.first().getOrder() != 1) return false;
@@ -89,6 +133,12 @@ public class OrderedTasks {
         return true;
     }
 
+    /**
+     * Validates that the collection contains at least one task of each required type.
+     *
+     * @return true if all task types are present
+     * @see Type
+     */
     public Boolean hasAllTaskTypes() {
         Set<Type> requiredTypes = Set.of(Type.values());
         Set<Type> existingTypes = tasks.stream()
