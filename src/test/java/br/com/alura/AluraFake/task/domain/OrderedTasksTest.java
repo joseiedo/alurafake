@@ -1,7 +1,6 @@
 package br.com.alura.AluraFake.task.domain;
 
 import br.com.alura.AluraFake.course.Course;
-import br.com.alura.AluraFake.task.MultipleChoiceTask;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

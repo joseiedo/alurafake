@@ -1,9 +1,6 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.task.domain;
 
 import br.com.alura.AluraFake.course.Course;
-import br.com.alura.AluraFake.task.domain.TaskOption;
-import br.com.alura.AluraFake.task.domain.TaskWithOptions;
-import br.com.alura.AluraFake.task.domain.Type;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Min;

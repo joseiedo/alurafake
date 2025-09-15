@@ -2,6 +2,7 @@ package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseRepository;
+import br.com.alura.AluraFake.task.domain.MultipleChoiceTask;
 import br.com.alura.AluraFake.task.domain.SingleChoiceTask;
 import br.com.alura.AluraFake.task.domain.Task;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
