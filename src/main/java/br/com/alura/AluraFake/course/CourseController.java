@@ -45,7 +45,7 @@ public class CourseController {
 
     @GetMapping("/course/all")
     public ResponseEntity<List<CourseListItemDTO>> listCourses() {
-        List<CourseListItemDTO> courses = courseRepository.findAll().stream()
+        List<CourseListItemDTO> courses = courseRepository.findAllWithTaskCount().stream()
                 .map(CourseListItemDTO::new)
                 .toList();
         return ResponseEntity.ok(courses);

@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -92,13 +93,11 @@ class CourseControllerTest {
 
     @Test
     void listAllCourses__should_list_all_courses() throws Exception {
-        User paulo = new User("Paulo", "paulo@alua.com.br", Role.INSTRUCTOR);
+        CourseProjection java = createMockProjection(1L, "Java", "Curso de java", Status.BUILDING, null, 0L);
+        CourseProjection hibernate = createMockProjection(2L, "Hibernate", "Curso de hibernate", Status.BUILDING, null, 2L);
+        CourseProjection spring = createMockProjection(3L, "Spring", "Curso de spring", Status.PUBLISHED, LocalDateTime.now(), 5L);
 
-        Course java = new Course("Java", "Curso de java", paulo);
-        Course hibernate = new Course("Hibernate", "Curso de hibernate", paulo);
-        Course spring = new Course("Spring", "Curso de spring", paulo);
-
-        when(courseRepository.findAll()).thenReturn(Arrays.asList(java, hibernate, spring));
+        when(courseRepository.findAllWithTaskCount()).thenReturn(Arrays.asList(java, hibernate, spring));
 
         mockMvc.perform(get("/course/all")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -108,7 +107,21 @@ class CourseControllerTest {
                 .andExpect(jsonPath("$[1].title").value("Hibernate"))
                 .andExpect(jsonPath("$[1].description").value("Curso de hibernate"))
                 .andExpect(jsonPath("$[2].title").value("Spring"))
-                .andExpect(jsonPath("$[2].description").value("Curso de spring"));
+                .andExpect(jsonPath("$[2].description").value("Curso de spring"))
+                .andExpect(jsonPath("$[0].taskCount").value(0))
+                .andExpect(jsonPath("$[1].taskCount").value(2))
+                .andExpect(jsonPath("$[2].taskCount").value(5));
+    }
+
+    private CourseProjection createMockProjection(Long id, String title, String description, Status status, LocalDateTime publishedAt, Long taskCount) {
+        CourseProjection projection = mock(CourseProjection.class);
+        doReturn(id).when(projection).getId();
+        doReturn(title).when(projection).getTitle();
+        doReturn(description).when(projection).getDescription();
+        doReturn(status).when(projection).getStatus();
+        doReturn(publishedAt).when(projection).getPublishedAt();
+        doReturn(taskCount).when(projection).getTaskCount();
+        return projection;
     }
 
     @Test

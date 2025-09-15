@@ -30,7 +30,7 @@ public class Course {
      * Manipulation operations in this field must be made through {@link Course#orderedTasks}
      * to ensure proper order management and sequence validation.
      */
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "course", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "course", fetch = FetchType.EAGER)
     private SortedSet<Task> tasks;
 
     /**

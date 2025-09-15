@@ -1,6 +1,6 @@
 package br.com.alura.AluraFake.instructor;
 
-import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.course.CourseProjection;
 import br.com.alura.AluraFake.course.Status;
 
 import java.time.LocalDateTime;
@@ -10,13 +10,14 @@ public record InstructorCourseReportResponseDTO(
         List<InstructorCourseReportItemDTO> courses,
         long totalPublishedCourses
 ) {
-    public static InstructorCourseReportResponseDTO fromModel(List<Course> courses) {
-        List<InstructorCourseReportItemDTO> courseItems = courses.stream()
-                .map(InstructorCourseReportItemDTO::fromModel)
+
+    public static InstructorCourseReportResponseDTO fromProjections(List<CourseProjection> projections) {
+        List<InstructorCourseReportItemDTO> courseItems = projections.stream()
+                .map(InstructorCourseReportItemDTO::fromProjection)
                 .toList();
 
-        long publishedCount = courses.stream()
-                .filter(Course::isPublished)
+        long publishedCount = projections.stream()
+                .filter(CourseProjection::isPublished)
                 .count();
 
         return new InstructorCourseReportResponseDTO(courseItems, publishedCount);
@@ -29,13 +30,14 @@ public record InstructorCourseReportResponseDTO(
             LocalDateTime publishedAt,
             int totalTasks
     ) {
-        public static InstructorCourseReportItemDTO fromModel(Course course) {
+
+        public static InstructorCourseReportItemDTO fromProjection(CourseProjection projection) {
             return new InstructorCourseReportItemDTO(
-                    course.getId(),
-                    course.getTitle(),
-                    course.getStatus(),
-                    course.getPublishedAt(),
-                    course.getTasks().size()
+                    projection.getId(),
+                    projection.getTitle(),
+                    projection.getStatus(),
+                    projection.getPublishedAt(),
+                    projection.getTaskCount().intValue()
             );
         }
     }

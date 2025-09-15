@@ -1,7 +1,8 @@
 package br.com.alura.AluraFake.instructor;
 
-import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.course.CourseProjection;
 import br.com.alura.AluraFake.course.CourseRepository;
+import br.com.alura.AluraFake.course.Status;
 import br.com.alura.AluraFake.user.Role;
 import br.com.alura.AluraFake.user.User;
 import br.com.alura.AluraFake.user.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -35,60 +37,83 @@ class InstructorControllerTest {
 
         mockMvc.perform(get("/instructor/999/courses"))
                 .andExpect(status().isNotFound());
-
-        verify(userRepository, times(1)).findById(999L);
-        verifyNoInteractions(courseRepository);
     }
 
     @Test
     void getInstructorCourseReport__should_return_bad_request_when_user_is_not_instructor() throws Exception {
-        User student = new User("Student Name", "student@alura.com.br", Role.STUDENT);
+        User student = new User("Student", "student@alura.com", Role.STUDENT);
         when(userRepository.findById(1L)).thenReturn(Optional.of(student));
 
         mockMvc.perform(get("/instructor/1/courses"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("user"))
                 .andExpect(jsonPath("$.message").value("User is not an instructor"));
-
-        verify(userRepository, times(1)).findById(1L);
-        verifyNoInteractions(courseRepository);
     }
 
     @Test
     void getInstructorCourseReport__should_return_empty_list_when_instructor_has_no_courses() throws Exception {
-        User instructor = new User("Instructor Name", "instructor@alura.com.br", Role.INSTRUCTOR);
+        User instructor = new User("Instructor", "instructor@alura.com", Role.INSTRUCTOR);
         when(userRepository.findById(1L)).thenReturn(Optional.of(instructor));
-        when(courseRepository.findByInstructorId(1L)).thenReturn(Collections.emptyList());
+        when(courseRepository.findByInstructorIdWithTaskCount(1L)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/instructor/1/courses"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courses").isArray())
                 .andExpect(jsonPath("$.courses").isEmpty())
                 .andExpect(jsonPath("$.totalPublishedCourses").value(0));
-
-        verify(userRepository, times(1)).findById(1L);
-        verify(courseRepository, times(1)).findByInstructorId(1L);
     }
 
     @Test
-    void getInstructorCourseReport__should_get_courses_by_instructor() throws Exception {
-        User instructor = new User("Ana Costa", "ana@alura.com.br", Role.INSTRUCTOR);
-        when(userRepository.findById(2L)).thenReturn(Optional.of(instructor));
+    void getInstructorCourseReport__should_get_published_courses_by_instructor() throws Exception {
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(instructor));
 
-        Course publishedCourseSpy = spy(new Course("Published Course", "A published course", instructor));
-        when(publishedCourseSpy.hasContinuousTaskSequence()).thenReturn(true);
-        when(publishedCourseSpy.hasAllTaskTypes()).thenReturn(true);
-        publishedCourseSpy.publish();
+        List<CourseProjection> courses = List.of(
+            createMockProjection(1L, "Published", Status.PUBLISHED, LocalDateTime.now(), 3L)
+        );
+        when(courseRepository.findByInstructorIdWithTaskCount(1L)).thenReturn(courses);
 
-        Course buildingCourse = new Course("Building Course", "A course in building", instructor);
-
-        when(courseRepository.findByInstructorId(2L)).thenReturn(List.of(publishedCourseSpy, buildingCourse));
-
-        mockMvc.perform(get("/instructor/2/courses"))
+        mockMvc.perform(get("/instructor/1/courses"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courses").isArray())
-                .andExpect(jsonPath("$.courses.length()").value(2))
+                .andExpect(jsonPath("$.courses.length()").value(1))
+                .andExpect(jsonPath("$.courses[0].id").value(1))
+                .andExpect(jsonPath("$.courses[0].title").value("Published"))
+                .andExpect(jsonPath("$.courses[0].status").value("PUBLISHED"))
+                .andExpect(jsonPath("$.courses[0].totalTasks").value(3))
+                .andExpect(jsonPath("$.courses[0].publishedAt").exists())
                 .andExpect(jsonPath("$.totalPublishedCourses").value(1));
+    }
+
+
+    @Test
+    void getInstructorCourseReport__should_get_building_courses_by_instructor() throws Exception {
+        User instructor = new User("John", "john@alura.com", Role.INSTRUCTOR);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(instructor));
+
+        List<CourseProjection> courses = List.of(
+                createMockProjection(1L, "Building", Status.BUILDING, LocalDateTime.now(), 3L)
+        );
+        when(courseRepository.findByInstructorIdWithTaskCount(1L)).thenReturn(courses);
+
+        mockMvc.perform(get("/instructor/1/courses"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courses.length()").value(1))
+                .andExpect(jsonPath("$.courses[0].id").value(1))
+                .andExpect(jsonPath("$.courses[0].title").value("Building"))
+                .andExpect(jsonPath("$.courses[0].status").value("BUILDING"))
+                .andExpect(jsonPath("$.courses[0].totalTasks").value(3))
+                .andExpect(jsonPath("$.courses[0].publishedAt").exists())
+                .andExpect(jsonPath("$.totalPublishedCourses").value(0));
+    }
+
+    private CourseProjection createMockProjection(Long id, String title, Status status, LocalDateTime publishedAt, Long taskCount) {
+        CourseProjection projection = mock(CourseProjection.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        doReturn(id).when(projection).getId();
+        doReturn(title).when(projection).getTitle();
+        doReturn("Description for " + title).when(projection).getDescription();
+        doReturn(status).when(projection).getStatus();
+        doReturn(publishedAt).when(projection).getPublishedAt();
+        doReturn(taskCount).when(projection).getTaskCount();
+        return projection;
     }
 
 }

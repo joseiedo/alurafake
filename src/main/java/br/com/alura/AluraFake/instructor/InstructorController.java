@@ -1,6 +1,7 @@
 package br.com.alura.AluraFake.instructor;
 
 import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.course.CourseProjection;
 import br.com.alura.AluraFake.course.CourseRepository;
 import br.com.alura.AluraFake.user.User;
 import br.com.alura.AluraFake.user.UserRepository;
@@ -38,9 +39,8 @@ public class InstructorController {
             return ResponseEntity.badRequest().body(new ErrorItemDTO("user", "User is not an instructor"));
         }
 
-        List<Course> courses = courseRepository.findByInstructorId(id);
-
-        InstructorCourseReportResponseDTO response = InstructorCourseReportResponseDTO.fromModel(courses);
+        List<CourseProjection> courses = courseRepository.findByInstructorIdWithTaskCount(id);
+        InstructorCourseReportResponseDTO response = InstructorCourseReportResponseDTO.fromProjections(courses);
 
         return ResponseEntity.ok(response);
     }
