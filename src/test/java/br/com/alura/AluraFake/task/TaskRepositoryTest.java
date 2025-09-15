@@ -34,7 +34,7 @@ public class TaskRepositoryTest {
     private TestEntityManager entityManager;
 
     @Test
-    public void shouldPersistOpenTextTask() {
+    public void save__should_persist_open_text_task() {
         User instructor = new User("John Doe", "john.opentext@alura.com", Role.INSTRUCTOR);
         userRepository.save(instructor);
 
@@ -58,7 +58,7 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    public void shouldPersistSingleChoiceTaskEntity() {
+    public void save__should_persist_single_choice_task_entity() {
         User instructor = new User("Jane Smith", "jane.singlechoice@alura.com", Role.INSTRUCTOR);
         userRepository.save(instructor);
 
@@ -85,7 +85,7 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    public void shouldPersistMultipleChoiceTaskEntity() {
+    public void save__should_persist_multiple_choice_task_entity() {
         User instructor = new User("Bob Johnson", "bob.multiplechoice@alura.com", Role.INSTRUCTOR);
         userRepository.save(instructor);
 
