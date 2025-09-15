@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.util.Assert;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -19,7 +18,6 @@ public abstract class Task implements Comparable<Task> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Size(min = 4, max = 255)
     private String statement;
@@ -52,6 +50,7 @@ public abstract class Task implements Comparable<Task> {
     public Long getId() {
         return id;
     }
+
 
     public String getStatement() {
         return statement;

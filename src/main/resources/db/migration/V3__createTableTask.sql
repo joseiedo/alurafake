@@ -1,6 +1,5 @@
 CREATE TABLE Task (
     id bigint(20) NOT NULL AUTO_INCREMENT,
-    createdAt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     statement varchar(255) NOT NULL,
     task_order int NOT NULL,
     course_id bigint(20) NOT NULL,
