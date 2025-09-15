@@ -17,6 +17,7 @@ import java.util.List;
 
 import static br.com.alura.AluraFake.shared.CourseFactory.createCourseReadyToPublish;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -54,6 +55,24 @@ class CourseRepositoryTest {
 
         assertThat(result).hasSize(2);
         assertThat(result).extracting(CourseProjection::getTaskCount).containsExactlyInAnyOrder(0L, 2L);
+
+        CourseProjection projectionA = result.stream()
+            .filter(c -> c.getTitle().equals("Course A"))
+            .findFirst()
+            .orElseThrow();
+        assertEquals("Course A", projectionA.getTitle());
+        assertEquals("Description A", projectionA.getDescription());
+        assertEquals(Status.BUILDING, projectionA.getStatus());
+        assertEquals(0L, projectionA.getTaskCount());
+
+        CourseProjection projectionB = result.stream()
+            .filter(c -> c.getTitle().equals("Course B"))
+            .findFirst()
+            .orElseThrow();
+        assertEquals("Course B", projectionB.getTitle());
+        assertEquals("Description B", projectionB.getDescription());
+        assertEquals(Status.BUILDING, projectionB.getStatus());
+        assertEquals(2L, projectionB.getTaskCount());
     }
 
     @Test
@@ -73,8 +92,13 @@ class CourseRepositoryTest {
         List<CourseProjection> result = courseRepository.findByInstructorIdWithTaskCount(instructor1.getId());
 
         assertThat(result).hasSize(1);
-        assertThat(result.getFirst().getTaskCount()).isEqualTo(1L);
-        assertThat(result.getFirst().getTitle()).isEqualTo("Java");
+
+        CourseProjection javaProjection = result.getFirst();
+        assertEquals("Java", javaProjection.getTitle());
+        assertEquals("Java course", javaProjection.getDescription());
+        assertEquals(Status.BUILDING, javaProjection.getStatus());
+        assertEquals(1L, javaProjection.getTaskCount());
+        assertThat(javaProjection.getPublishedAt()).isNull();
     }
 
     @Test
@@ -105,9 +129,13 @@ class CourseRepositoryTest {
         List<CourseProjection> result = courseRepository.findAllWithTaskCount();
 
         assertThat(result).hasSize(1);
+
         CourseProjection published = result.getFirst();
+        assertEquals("Course", published.getTitle());
+        assertEquals("Description", published.getDescription());
+        assertEquals(Status.PUBLISHED, published.getStatus());
+        assertEquals(3L, published.getTaskCount());
         assertThat(published.isPublished()).isTrue();
         assertThat(published.getPublishedAt()).isNotNull();
-        assertThat(published.getTaskCount()).isEqualTo(3L);
     }
 }
