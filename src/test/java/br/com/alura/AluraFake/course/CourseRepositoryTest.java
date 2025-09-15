@@ -1,8 +1,6 @@
 package br.com.alura.AluraFake.course;
 
-import br.com.alura.AluraFake.shared.CourseFactory;
-import br.com.alura.AluraFake.task.TaskRepository;
-import br.com.alura.AluraFake.task.domain.*;
+import br.com.alura.AluraFake.task.domain.OpenTextTask;
 import br.com.alura.AluraFake.user.Role;
 import br.com.alura.AluraFake.user.User;
 import br.com.alura.AluraFake.user.UserRepository;
@@ -29,9 +27,6 @@ class CourseRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private TaskRepository taskRepository;
 
     @Autowired
     private TestEntityManager entityManager;

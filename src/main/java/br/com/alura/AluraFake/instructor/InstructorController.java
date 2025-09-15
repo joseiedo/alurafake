@@ -1,6 +1,5 @@
 package br.com.alura.AluraFake.instructor;
 
-import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseProjection;
 import br.com.alura.AluraFake.course.CourseRepository;
 import br.com.alura.AluraFake.user.User;

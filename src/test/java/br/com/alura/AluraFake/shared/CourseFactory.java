@@ -1,12 +1,11 @@
 package br.com.alura.AluraFake.shared;
 
 import br.com.alura.AluraFake.course.Course;
-import br.com.alura.AluraFake.course.CourseRepository;
-import br.com.alura.AluraFake.task.TaskRepository;
-import br.com.alura.AluraFake.task.domain.*;
+import br.com.alura.AluraFake.task.domain.MultipleChoiceTask;
+import br.com.alura.AluraFake.task.domain.OpenTextTask;
+import br.com.alura.AluraFake.task.domain.SingleChoiceTask;
+import br.com.alura.AluraFake.task.domain.TaskOption;
 import br.com.alura.AluraFake.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
