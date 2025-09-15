@@ -28,7 +28,7 @@ class CourseControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void newCourseDTO__should_return_bad_request_when_email_is_invalid() throws Exception {
+    void newCourse__should_return_bad_request_when_email_is_invalid() throws Exception {
 
         NewCourseDTO newCourseDTO = new NewCourseDTO();
         newCourseDTO.setTitle("Java");
@@ -48,7 +48,7 @@ class CourseControllerTest {
 
 
     @Test
-    void newCourseDTO__should_return_bad_request_when_email_is_no_instructor() throws Exception {
+    void newCourse__should_return_bad_request_when_email_is_no_instructor() throws Exception {
 
         NewCourseDTO newCourseDTO = new NewCourseDTO();
         newCourseDTO.setTitle("Java");
@@ -70,7 +70,7 @@ class CourseControllerTest {
     }
 
     @Test
-    void newCourseDTO__should_return_created_when_new_course_request_is_valid() throws Exception {
+    void newCourse__should_return_created_when_new_course_request_is_valid() throws Exception {
 
         NewCourseDTO newCourseDTO = new NewCourseDTO();
         newCourseDTO.setTitle("Java");

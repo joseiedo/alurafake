@@ -16,7 +16,7 @@ class TaskOptionTest {
             "WHAT IS JAVA?, true",
             "What is Python?, false",
             "Object-oriented language, true",
-            "Platform independent, true"
+            "Platform independent, true",
     })
     void containsStatement__should_check_statement_in_options(String statement, boolean expectedResult) {
         List<TaskOption> options = List.of(

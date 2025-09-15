@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 public record NewOpenTextTaskDTO(
         @NotNull
         Long courseId,
+        @NotNull
         @Size(min = 4, max = 255)
         String statement,
 

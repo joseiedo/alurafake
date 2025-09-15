@@ -29,6 +29,7 @@ public abstract class Task implements Comparable<Task> {
     private Long id;
 
 
+    @NotNull
     @Size(min = 4, max = 255)
     private String statement;
 
