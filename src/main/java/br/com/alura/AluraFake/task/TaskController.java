@@ -50,8 +50,8 @@ public class TaskController {
     @PostMapping("/task/new/singlechoice")
     @Transactional
     public ResponseEntity<?> newSingleChoice(@RequestBody @Valid NewSingleChoiceTaskDTO dto) {
-        if (dto.hasRequiredCorrectOption()) {
-            String message = format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_OPTIONS);
+        if (!dto.hasRequiredCorrectOptionCounts()) {
+            String message = format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_CORRECT_OPTIONS_SIZE);
             return ResponseEntity.badRequest().body(new ErrorItemDTO("options", message));
         }
 
@@ -75,7 +75,7 @@ public class TaskController {
     @Transactional
     public ResponseEntity<?> newMultipleChoice(@RequestBody @Valid NewMultipleChoiceTaskDTO dto) {
         if (!dto.hasRequiredOptionCounts()) {
-            String message = format("Task must include at least %d correct option(s) and %d incorrect option(s).", MultipleChoiceTask.MIN_CORRECT_OPTIONS, MultipleChoiceTask.MIN_WRONG_OPTIONS);
+            String message = format("Task must include at least %d correct option(s) and %d incorrect option(s).", MultipleChoiceTask.MIN_CORRECT_OPTIONS_SIZE, MultipleChoiceTask.MIN_WRONG_OPTIONS_SIZE);
             return ResponseEntity.badRequest().body(new ErrorItemDTO("options", message));
         }
 

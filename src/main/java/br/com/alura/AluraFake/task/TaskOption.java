@@ -40,13 +40,13 @@ public final class TaskOption {
         return this.option.equalsIgnoreCase(text);
     }
 
-    public static Boolean isStatementInOptions(@NotNull String statement, @NotNull List<TaskOption> taskOptions) {
+    public static Boolean containsStatement(@NotNull String statement, @NotNull List<TaskOption> taskOptions) {
         Assert.notNull(statement, "Received statement should not be null");
         Assert.notNull(taskOptions, "Received taskOptions should not be null");
         return taskOptions.stream().anyMatch(taskOption -> taskOption.hasOptionText(statement));
     }
 
-    public static Boolean hasRepeatingOptions(@NotNull List<TaskOption> taskOptions) {
+    public static Boolean hasDuplicateOptions(@NotNull List<TaskOption> taskOptions) {
         Set<String> seen = new HashSet<>();
         return taskOptions.stream()
                 .map(taskOption -> taskOption.getOption().toLowerCase(Locale.ROOT))

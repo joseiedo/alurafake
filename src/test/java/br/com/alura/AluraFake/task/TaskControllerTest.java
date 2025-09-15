@@ -140,7 +140,7 @@ public class TaskControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("options"))
-                .andExpect(jsonPath("$.message").value(format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_OPTIONS)));
+                .andExpect(jsonPath("$.message").value(format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_CORRECT_OPTIONS_SIZE)));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class TaskControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.field").value("options"))
-                .andExpect(jsonPath("$.message").value(format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_OPTIONS)));
+                .andExpect(jsonPath("$.message").value(format("Task must have %d correct option.", SingleChoiceTask.REQUIRED_CORRECT_OPTIONS_SIZE)));
     }
 
     @Test
@@ -253,8 +253,8 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.field").value("options"))
                 .andExpect(jsonPath("$.message").value(format(
                         "Task must include at least %d correct option(s) and %d incorrect option(s).",
-                        MultipleChoiceTask.MIN_CORRECT_OPTIONS,
-                        MultipleChoiceTask.MIN_WRONG_OPTIONS
+                        MultipleChoiceTask.MIN_CORRECT_OPTIONS_SIZE,
+                        MultipleChoiceTask.MIN_WRONG_OPTIONS_SIZE
                 )));
     }
 
@@ -274,8 +274,8 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.field").value("options"))
                 .andExpect(jsonPath("$.message").value(format(
                         "Task must include at least %d correct option(s) and %d incorrect option(s).",
-                        MultipleChoiceTask.MIN_CORRECT_OPTIONS,
-                        MultipleChoiceTask.MIN_WRONG_OPTIONS
+                        MultipleChoiceTask.MIN_CORRECT_OPTIONS_SIZE,
+                        MultipleChoiceTask.MIN_WRONG_OPTIONS_SIZE
                 )));
     }
 

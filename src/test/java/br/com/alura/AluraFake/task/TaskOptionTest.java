@@ -25,7 +25,7 @@ class TaskOptionTest {
                 new TaskOption("Platform independent", false)
         );
 
-        assertEquals(expectedResult, TaskOption.isStatementInOptions(statement, options));
+        assertEquals(expectedResult, TaskOption.containsStatement(statement, options));
     }
 
     @Test
@@ -33,7 +33,7 @@ class TaskOptionTest {
         String statement = "What is Java?";
         List<TaskOption> options = List.of();
 
-        assertFalse(TaskOption.isStatementInOptions(statement, options));
+        assertFalse(TaskOption.containsStatement(statement, options));
     }
 
     @Test
@@ -44,7 +44,7 @@ class TaskOptionTest {
                 new TaskOption("Object-orieNTED language", false)
         );
 
-        assertTrue(TaskOption.hasRepeatingOptions(options));
+        assertTrue(TaskOption.hasDuplicateOptions(options));
     }
 
     @Test
@@ -56,13 +56,13 @@ class TaskOptionTest {
                 new TaskOption("Interpreted language", false)
         );
 
-        assertFalse(TaskOption.hasRepeatingOptions(options));
+        assertFalse(TaskOption.hasDuplicateOptions(options));
     }
 
     @Test
     void should_return_false_when_checking_empty_options_for_duplicates() {
         List<TaskOption> options = List.of();
-        assertFalse(TaskOption.hasRepeatingOptions(options));
+        assertFalse(TaskOption.hasDuplicateOptions(options));
     }
 
     @Test

@@ -1,6 +1,5 @@
 package br.com.alura.AluraFake.task;
 
-import br.com.alura.AluraFake.course.Course;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.util.Assert;
 
@@ -48,8 +47,8 @@ public class OrderedTasks {
      * @throws IllegalArgumentException if the task order is invalid
      */
     public void add(Task task) {
-        Assert.isTrue(hasOrderRespectingTasksSize(task), "Task order value is higher than list size");
-        Assert.isTrue(hasValidOrderGaps(task), "Task has an order with an invalid gap between existing tasks");
+        Assert.isTrue(isOrderWithinBounds(task), "Task order value is higher than list size");
+        Assert.isTrue(fitsInSequence(task), "Task has an order with an invalid gap between existing tasks");
         if (isOrderInUse(task.getOrder())) {
             shiftTasksWithOrderHigherOrEqualTo(task.getOrder());
         }
@@ -62,15 +61,15 @@ public class OrderedTasks {
      * @param task the task to validate
      * @return true if order is within valid range
      */
-    public Boolean hasOrderRespectingTasksSize(@NotNull Task task) {
+    public Boolean isOrderWithinBounds(@NotNull Task task) {
         Assert.notNull(task, "Received task can't be null");
         return task.getOrder() <= tasks.size() + 1;
     }
 
-    public Boolean hasValidOrderGaps(@NotNull Task task) {
+    public Boolean fitsInSequence(@NotNull Task task) {
         Assert.notNull(task, "Received task can't be null");
         Assert.isTrue(hasContinuousTaskSequence(), "Tasks are not in a continuous sequence");
-        return isOrderRespectingSequence(task.getOrder());
+        return fitsInSequence(task.getOrder());
     }
 
 
@@ -79,7 +78,7 @@ public class OrderedTasks {
      * @param order The order to check
      * @return true if the order is respecting the sequence rule
      */
-    public Boolean isOrderRespectingSequence(@NotNull Integer order) {
+    public Boolean fitsInSequence(@NotNull Integer order) {
         if (tasks.isEmpty()) {
             return order == 1;
         }
@@ -89,7 +88,7 @@ public class OrderedTasks {
     }
 
     public Boolean hasTaskWithStatement(String statement) {
-        return this.tasks.stream().anyMatch(currentTask -> currentTask.isStatementEquals(statement));
+        return this.tasks.stream().anyMatch(currentTask -> currentTask.matchesStatement(statement));
     }
 
     private void shiftTasksWithOrderHigherOrEqualTo(Integer order) {
@@ -126,7 +125,7 @@ public class OrderedTasks {
         List<Task> sortedTasks = tasks.stream().sorted().toList();
         for (int index = 1; index < sortedTasks.size(); index++) {
             Task previousTask = sortedTasks.get(index - 1);
-            if (!Objects.equals(sortedTasks.get(index).getOrderDistance(previousTask), MAX_GAP_BETWEEN_TASK_ORDER)) {
+            if (!Objects.equals(sortedTasks.get(index).getOrderGap(previousTask), MAX_GAP_BETWEEN_TASK_ORDER)) {
                 return false;
             }
         }

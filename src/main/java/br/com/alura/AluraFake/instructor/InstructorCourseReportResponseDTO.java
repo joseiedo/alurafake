@@ -27,7 +27,7 @@ public record InstructorCourseReportResponseDTO(
             String title,
             Status status,
             LocalDateTime publishedAt,
-            int activityCount
+            int totalTasks
     ) {
         public static InstructorCourseReportItemDTO fromModel(Course course) {
             return new InstructorCourseReportItemDTO(

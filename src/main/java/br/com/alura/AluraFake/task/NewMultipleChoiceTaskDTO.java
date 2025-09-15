@@ -40,7 +40,7 @@ public record NewMultipleChoiceTaskDTO(
         long correct = options.stream().filter(TaskOptionDTO::isCorrect).count();
         long wrong = options.size() - correct;
 
-        return wrong >= MultipleChoiceTask.MIN_WRONG_OPTIONS && correct >= MultipleChoiceTask.MIN_CORRECT_OPTIONS;
+        return wrong >= MultipleChoiceTask.MIN_WRONG_OPTIONS_SIZE && correct >= MultipleChoiceTask.MIN_CORRECT_OPTIONS_SIZE;
     }
 
     public record TaskOptionDTO(

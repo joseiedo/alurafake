@@ -36,9 +36,9 @@ public record NewSingleChoiceTaskDTO(
         return new SingleChoiceTask(course, statement, order, taskOptions);
     }
 
-    public Boolean hasRequiredCorrectOption() {
+    public Boolean hasRequiredCorrectOptionCounts() {
         long correctCount = options.stream().filter(NewSingleChoiceTaskDTO.TaskOptionDTO::isCorrect).count();
-        return correctCount != 1;
+        return correctCount == 1;
     }
 
     public record TaskOptionDTO(

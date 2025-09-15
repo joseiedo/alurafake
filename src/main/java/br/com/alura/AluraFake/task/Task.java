@@ -9,6 +9,16 @@ import org.springframework.util.Assert;
 
 import java.util.Objects;
 
+/**
+ * Base class for course activities with ordering and validation capabilities.
+ *
+ * <p>Tasks maintain a continuous sequence within courses and enforce business rules
+ * for statement uniqueness and order management. Subclasses implement specific
+ * task types (OPEN_TEXT, SINGLE_CHOICE, MULTIPLE_CHOICE).</p>
+ *
+ * @see OrderedTasks
+ * @see Type
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
@@ -56,7 +66,7 @@ public abstract class Task implements Comparable<Task> {
         return statement;
     }
 
-    public Boolean isStatementEquals(String statement) {
+    public Boolean matchesStatement(String statement) {
         return this.statement.equals(statement);
     }
 
@@ -66,7 +76,7 @@ public abstract class Task implements Comparable<Task> {
         return order;
     }
 
-    public Integer getOrderDistance(Task task) {
+    public Integer getOrderGap(Task task) {
         Assert.notNull(task, "Received task can't be null");
         return Math.abs(this.order - task.getOrder());
     }

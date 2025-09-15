@@ -25,9 +25,18 @@ public class Course {
     private Status status;
     private LocalDateTime publishedAt;
 
+    /**
+     * Tasks list.
+     * Manipulation operations in this field must be made through {@link Course#orderedTasks}
+     * to ensure proper order management and sequence validation.
+     */
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "course", fetch = FetchType.LAZY)
     private SortedSet<Task> tasks;
 
+    /**
+     * Wrapper for {@link Course#tasks}
+     * field with order management and sequence validation.
+     */
     @Transient
     private OrderedTasks orderedTasks;
 
@@ -81,6 +90,10 @@ public class Course {
         return publishedAt;
     }
 
+    /**
+     * Publishes the course after validating business rules.
+     * Requires BUILDING status, continuous task sequence, and all task types present.
+     */
     public void publish() {
         Assert.isTrue(this.isBuilding(), "Course is not in BUILDING status");
         Assert.isTrue(this.hasContinuousTaskSequence(), "Course task sequence is not continuous");
@@ -102,9 +115,15 @@ public class Course {
     }
 
     public boolean isOrderPlacementValid(Integer order) {
-        return this.orderedTasks.isOrderRespectingSequence(order);
+        return this.orderedTasks.fitsInSequence(order);
     }
 
+    /**
+     * Adds a task to the course with validation and automatic order management.
+     * The ordering and shifting logic are handled by {@link OrderedTasks}.
+     *
+     * @see OrderedTasks
+     */
     public void addTask(Task task){
        Assert.isTrue(this.isBuilding(), "Course can't receive more tasks when not in BUILDING status");
        Assert.isTrue(!this.hasTaskWithStatement(task.getStatement()), "Course can't have multiple tasks with the same statement");

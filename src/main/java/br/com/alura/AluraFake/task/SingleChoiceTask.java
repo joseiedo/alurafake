@@ -14,7 +14,7 @@ import java.util.List;
 @DiscriminatorValue("SINGLE_CHOICE")
 public class SingleChoiceTask extends TaskWithOptions {
 
-    public static final Integer REQUIRED_OPTIONS = 1;
+    public static final Integer REQUIRED_CORRECT_OPTIONS_SIZE = 1;
 
     @Deprecated
     public SingleChoiceTask() {

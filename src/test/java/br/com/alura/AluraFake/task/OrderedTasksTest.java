@@ -123,7 +123,7 @@ class OrderedTasksTest {
 
         OpenTextTask task = new OpenTextTask(mockCourse, "First task", 1);
 
-        assertTrue(organizer.hasValidOrderGaps(task));
+        assertTrue(organizer.fitsInSequence(task));
     }
 
     @Test
@@ -136,7 +136,7 @@ class OrderedTasksTest {
 
         OpenTextTask newTask = new OpenTextTask(mockCourse, "Task 2", 3);
 
-        assertFalse(organizer.hasValidOrderGaps(newTask));
+        assertFalse(organizer.fitsInSequence(newTask));
     }
 
     @Test
@@ -151,7 +151,7 @@ class OrderedTasksTest {
 
         OpenTextTask newTask = new OpenTextTask(mockCourse, "Task with gap", 3);
 
-        assertFalse(organizer.hasValidOrderGaps(newTask));
+        assertFalse(organizer.fitsInSequence(newTask));
     }
 
 
@@ -167,7 +167,7 @@ class OrderedTasksTest {
 
         OpenTextTask newTask = new OpenTextTask(mockCourse, "New task", 2);
 
-        assertTrue(organizer.hasValidOrderGaps(newTask));
+        assertTrue(organizer.fitsInSequence(newTask));
     }
 
     @Test
