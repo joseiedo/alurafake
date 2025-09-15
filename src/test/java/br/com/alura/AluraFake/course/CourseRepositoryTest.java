@@ -42,12 +42,10 @@ class CourseRepositoryTest {
 
         Course courseA = new Course("Course A", "Description A", instructor);
         Course courseB = new Course("Course B", "Description B", instructor);
-        courseRepository.saveAll(List.of(courseA, courseB));
+        new OpenTextTask(courseB, "Task 1", 1);
+        new OpenTextTask(courseB, "Task 2", 2);
 
-        taskRepository.saveAll(List.of(
-            new OpenTextTask(courseB, "Task 1", 1),
-            new OpenTextTask(courseB, "Task 2", 2)
-        ));
+        courseRepository.saveAll(List.of(courseA, courseB));
 
         entityManager.flush();
         entityManager.clear();
@@ -66,9 +64,8 @@ class CourseRepositoryTest {
 
         Course course1 = new Course("Java", "Java course", instructor1);
         Course course2 = new Course("Python", "Python course", instructor2);
+        new OpenTextTask(course1, "What is Java?", 1);
         courseRepository.saveAll(List.of(course1, course2));
-
-        taskRepository.save(new OpenTextTask(course1, "What is Java?", 1));
 
         entityManager.flush();
         entityManager.clear();
@@ -76,8 +73,8 @@ class CourseRepositoryTest {
         List<CourseProjection> result = courseRepository.findByInstructorIdWithTaskCount(instructor1.getId());
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getTaskCount()).isEqualTo(1L);
-        assertThat(result.get(0).getTitle()).isEqualTo("Java");
+        assertThat(result.getFirst().getTaskCount()).isEqualTo(1L);
+        assertThat(result.getFirst().getTitle()).isEqualTo("Java");
     }
 
     @Test
