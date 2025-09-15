@@ -25,17 +25,13 @@ import java.util.*;
  */
 public class OrderedTasks {
 
-    private final TreeSet<Task> tasks;
+    private final SortedSet<Task> tasks;
 
     final Integer MAX_GAP_BETWEEN_TASK_ORDER = 1;
 
-    public OrderedTasks(TreeSet<Task> tasks) {
+    public OrderedTasks(SortedSet<Task> tasks) {
         Assert.notNull(tasks, "Received tasks must not be null");
         this.tasks = tasks;
-    }
-
-    public OrderedTasks(Collection<Task> tasks) {
-        this(new TreeSet<>(tasks));
     }
 
     /**
@@ -104,7 +100,7 @@ public class OrderedTasks {
         tasks.addAll(tasksToShift);
     }
 
-    public TreeSet<Task> getTasks() {
+    public SortedSet<Task> getTasks() {
         return tasks;
     }
 
