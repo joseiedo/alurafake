@@ -53,10 +53,8 @@ public final class TaskOption {
                 .anyMatch(option -> !seen.add(option));
     }
 
-    public static Boolean hasOneCorrectOption(@NotNull List<TaskOption> taskOptions) {
-        return taskOptions.stream()
-                .filter(TaskOption::getCorrect)
-                .count() == 1;
+    public static Boolean hasExactlyOneCorrectOption(@NotNull List<TaskOption> taskOptions) {
+        return countCorrectOptions(taskOptions) == 1;
     }
 
     public static Long countCorrectOptions(@NotNull List<TaskOption> taskOptions) {

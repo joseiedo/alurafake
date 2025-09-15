@@ -18,7 +18,7 @@ class TaskOptionTest {
             "Object-oriented language, true",
             "Platform independent, true"
     })
-    void should_check_statement_in_options(String statement, boolean expectedResult) {
+    void containsStatement__should_check_statement_in_options(String statement, boolean expectedResult) {
         List<TaskOption> options = List.of(
                 new TaskOption("What is Java?", true),
                 new TaskOption("Object-oriented language", false),
@@ -29,7 +29,7 @@ class TaskOptionTest {
     }
 
     @Test
-    void should_return_false_when_statement_is_not_in_empty_options() {
+    void containsStatement__should_return_false_when_statement_is_not_in_empty_options() {
         String statement = "What is Java?";
         List<TaskOption> options = List.of();
 
@@ -37,7 +37,7 @@ class TaskOptionTest {
     }
 
     @Test
-    void should_return_true_when_options_have_duplicates() {
+    void hasDuplicateOptions__should_return_true_when_options_have_duplicates() {
         List<TaskOption> options = List.of(
                 new TaskOption("Object-oriented language", true),
                 new TaskOption("Platform independent", false),
@@ -48,7 +48,7 @@ class TaskOptionTest {
     }
 
     @Test
-    void should_return_false_when_options_have_no_duplicates() {
+    void hasDuplicateOptions__should_return_false_when_options_have_no_duplicates() {
         List<TaskOption> options = List.of(
                 new TaskOption("Object-oriented language", true),
                 new TaskOption("Platform independent", false),
@@ -60,52 +60,52 @@ class TaskOptionTest {
     }
 
     @Test
-    void should_return_false_when_checking_empty_options_for_duplicates() {
+    void hasDuplicateOptions__should_return_false_when_checking_empty_options_for_duplicates() {
         List<TaskOption> options = List.of();
         assertFalse(TaskOption.hasDuplicateOptions(options));
     }
 
     @Test
-    void should_return_true_when_options_have_exactly_one_correct_option() {
+    void hasExactlyOneCorrectOption__should_return_true_when_options_have_exactly_one_correct_option() {
         List<TaskOption> options = List.of(
                 new TaskOption("Object-oriented language", true),
                 new TaskOption("Platform independent", false),
                 new TaskOption("Compiled language", false)
         );
 
-        assertTrue(TaskOption.hasOneCorrectOption(options));
+        assertTrue(TaskOption.hasExactlyOneCorrectOption(options));
     }
 
     @Test
-    void should_return_false_when_options_have_no_correct_option() {
+    void hasExactlyOneCorrectOption__should_return_false_when_options_have_no_correct_option() {
         List<TaskOption> options = List.of(
                 new TaskOption("Object-oriented language", false),
                 new TaskOption("Platform independent", false),
                 new TaskOption("Compiled language", false)
         );
 
-        assertFalse(TaskOption.hasOneCorrectOption(options));
+        assertFalse(TaskOption.hasExactlyOneCorrectOption(options));
     }
 
     @Test
-    void should_return_false_when_options_have_multiple_correct_options() {
+    void hasExactlyOneCorrectOption__should_return_false_when_options_have_multiple_correct_options() {
         List<TaskOption> options = List.of(
                 new TaskOption("Object-oriented language", true),
                 new TaskOption("Platform independent", true),
                 new TaskOption("Compiled language", false)
         );
 
-        assertFalse(TaskOption.hasOneCorrectOption(options));
+        assertFalse(TaskOption.hasExactlyOneCorrectOption(options));
     }
 
     @Test
-    void should_return_false_when_checking_empty_options_for_correct_option() {
+    void hasExactlyOneCorrectOption__should_return_false_when_checking_empty_options_for_correct_option() {
         List<TaskOption> options = List.of();
-        assertFalse(TaskOption.hasOneCorrectOption(options));
+        assertFalse(TaskOption.hasExactlyOneCorrectOption(options));
     }
 
     @Test
-    void should_count_correct_options_correctly() {
+    void countCorrectOptions__should_count_correct_options_correctly() {
         List<TaskOption> options = List.of(
                 new TaskOption("Java is object-oriented", true),
                 new TaskOption("Java is platform independent", true),
@@ -116,7 +116,7 @@ class TaskOptionTest {
     }
 
     @Test
-    void should_count_wrong_options_correctly() {
+    void countIncorrectOptions__should_count_wrong_options_correctly() {
         List<TaskOption> options = List.of(
                 new TaskOption("Java is object-oriented", true),
                 new TaskOption("Java is functional only", false),
@@ -127,7 +127,7 @@ class TaskOptionTest {
     }
 
     @Test
-    void should_return_zero_when_no_matching_options() {
+    void countIncorrectOptions__should_return_zero_when_no_matching_options() {
         List<TaskOption> options = List.of(
                 new TaskOption("Java is object-oriented", true),
                 new TaskOption("Java is platform independent", true),
@@ -138,7 +138,7 @@ class TaskOptionTest {
     }
 
     @Test
-    void should_return_zero_when_counting_empty_options() {
+    void countOptions__should_return_zero_when_counting_empty_options() {
         List<TaskOption> options = List.of();
         assertEquals(0L, TaskOption.countCorrectOptions(options));
         assertEquals(0L, TaskOption.countIncorrectOptions(options));
